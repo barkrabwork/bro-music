@@ -3,7 +3,7 @@
   const CFG = window.CONFIG || {};
   const BASE = (CFG.MUSIC_BASE_URL || "./").replace(/\/*$/, "/");
   // старое название из config.js, который уже лежит в репозитории, заменяем новым
-  const SITE = CFG.SITE_TITLE && CFG.SITE_TITLE !== "Bro Music" ? CFG.SITE_TITLE : "Villa Vibe";
+  const SITE = CFG.SITE_TITLE && !["Bro Music", "Villa Vibe"].includes(CFG.SITE_TITLE) ? CFG.SITE_TITLE : "Villa Vibe Mixtapes";
   // карточка для темы PromoDJ (можно переопределить в config.js: PROFILE: ["строка 1", "строка 2"])
   const PROFILE = CFG.PROFILE || [
     "Алексей Литвяков",

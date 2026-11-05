@@ -5,7 +5,7 @@
 // Файл tracks.json сайт ищет по этому же адресу.
 window.CONFIG = {
   MUSIC_BASE_URL: "./demo-tracks/",
-  SITE_TITLE: "Villa Vibe",
+  SITE_TITLE: "Villa Vibe Mixtapes",
 
   // Необязательно: значения внешнего вида по умолчанию (то, что видит новый посетитель
   // до своих настроек). Любое поле можно убрать.
