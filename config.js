@@ -5,13 +5,14 @@
 // Файл tracks.json сайт ищет по этому же адресу.
 window.CONFIG = {
   MUSIC_BASE_URL: "./demo-tracks/",
-  SITE_TITLE: "Bro Music",
+  SITE_TITLE: "Villa Vibe",
 
   // Необязательно: значения внешнего вида по умолчанию (то, что видит новый посетитель
   // до своих настроек). Любое поле можно убрать.
-  //   theme: "dark" | "black" | "light"
+  //   theme: "dark" | "black" | "light" | "promodj"
   //   hs: размер заголовков в % (80..140), ts: размер текста в % (85..130)
   //   accent: цвет акцента, например "#2f9bff"; text: цвет текста, например "#ffffff"
+  //   fl, fc, fr: true: шрифт Caveat в левой, центральной, правой панели
   //   bg: "url" и bgUrl: "https://..." для фона-картинки; dim: затемнение фона в % (0..90)
   DEFAULT_SETTINGS: {},
 };

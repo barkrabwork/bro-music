@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#000000">
-  <title>Bro Music</title>
-  <script>try{var s=JSON.parse(localStorage.getItem("bro.settings")||"{}");if(s.theme)document.documentElement.dataset.theme=s.theme}catch(e){}</script>
+  <title>Villa Vibe</title>
+  <script>try{var s=JSON.parse(localStorage.getItem("bro.settings")||"{}"),d=document.documentElement;if(s.theme)d.dataset.theme=s.theme;if(s.fl)d.classList.add("f-left");if(s.fc)d.classList.add("f-center");if(s.fr)d.classList.add("f-right")}catch(e){}</script>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -13,18 +13,21 @@
   <div class="bg-dim"></div>
 
   <div class="app">
-    <header class="topbar">
-      <div class="brand"><svg viewBox="0 0 24 24" aria-hidden="true" id="brandIcon"></svg><span id="brandName">Bro Music</span></div>
-      <input id="search" type="search" placeholder="Поиск треков" autocomplete="off" aria-label="Поиск треков">
-      <button class="icon-btn" id="bHelp" aria-label="Справка" title="Справка" data-icon="help"></button>
-      <button class="icon-btn" id="bSettings" aria-label="Настройки" title="Настройки вида" data-icon="settings"></button>
+    <header class="top-wrap">
+      <div class="promo-banner" role="img" aria-label="Villa Vibe"></div>
+      <div class="topbar">
+        <div class="brand"><svg viewBox="0 0 24 24" aria-hidden="true" id="brandIcon"></svg><span id="brandName">Villa Vibe</span></div>
+        <input id="search" type="search" placeholder="Поиск треков" autocomplete="off" aria-label="Поиск треков">
+        <button class="icon-btn" id="bHelp" aria-label="Справка" title="Справка" data-icon="help"></button>
+        <button class="icon-btn" id="bSettings" aria-label="Настройки" title="Настройки вида" data-icon="settings"></button>
+      </div>
     </header>
 
     <nav class="sidebar" id="sidebar" aria-label="Навигация"></nav>
 
     <main class="content" id="content"></main>
 
-    <aside class="np empty" id="np" aria-label="Сейчас играет">
+    <aside class="np no-track" id="np" aria-label="Сейчас играет">
       <button class="icon-btn np-close" id="npClose" aria-label="Свернуть" title="Свернуть" data-icon="down"></button>
       <div class="np-inner">
         <div class="vinyl" id="vinyl"><div class="disc"><div class="label" id="npLabel"></div></div></div>
@@ -41,7 +44,6 @@
           <button class="icon-btn fav-btn" id="npFav" aria-label="В избранное" title="В избранное" data-icon="heart"></button>
           <button class="icon-btn js-menu-btn" id="npAdd" aria-label="Добавить в плейлист" title="Добавить в плейлист" data-icon="plus"></button>
           <button class="icon-btn js-menu-btn" id="npShare" aria-label="Поделиться ссылкой" title="Скопировать ссылку" data-icon="link"></button>
-          <a class="icon-btn" id="npDl" aria-label="Скачать" title="Скачать" target="_blank" rel="noopener" data-icon="download"></a>
         </div>
         <div class="np-info" id="npInfo" hidden></div>
       </div>

@@ -1,3 +1,24 @@
+/* ---------- fonts (лежат на сайте, подгружаются только когда нужны) ---------- */
+@font-face {
+  font-family: "Permanent Marker";
+  src: url("fonts/permanent-marker.ttf") format("truetype");
+  font-display: swap;
+}
+@font-face {
+  font-family: "Caveat";
+  font-weight: 700;
+  src: url("fonts/caveat-700-cyrillic.woff2") format("woff2");
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Caveat";
+  font-weight: 700;
+  src: url("fonts/caveat-700-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+  font-display: swap;
+}
+
 /* ---------- themes ---------- */
 :root {
   --bg: #111;
@@ -66,6 +87,33 @@
   --shadow: rgba(0, 0, 0, 0.18);
   color-scheme: light;
 }
+/* PromoDJ: светлая тема в цветах логотипа (голубой и оранжевый) */
+:root[data-theme="promodj"] {
+  --bg: #fff;
+  --panel: #fff;
+  --panel-2: #eef5fa;
+  --line: #d6e3ec;
+  --bar: #fff;
+  --text: #1d2b36;
+  --text-2: #2f4250;
+  --muted: #667c8b;
+  --icon: #51677a;
+  --icon-strong: #000;
+  --accent: #e8582d;
+  --wave: #a9cfe8;
+  --track: #c4d9e7;
+  --field: #eef5fa;
+  --field-focus: #e2eef6;
+  --menu-bg: #fff;
+  --menu-line: #d6e3ec;
+  --menu-hover: #eef5fa;
+  --hover: rgba(40, 110, 160, 0.08);
+  --play-bg: #e8582d;
+  --play-fg: #fff;
+  --cover-bg: #d4e6f2;
+  --shadow: rgba(30, 80, 120, 0.2);
+  color-scheme: light;
+}
 html.has-bg {
   --panel-bg: color-mix(in srgb, var(--panel) 68%, transparent);
   --bar-bg: color-mix(in srgb, var(--bar) 76%, transparent);
@@ -125,8 +173,9 @@ html.has-bg .player { backdrop-filter: blur(10px); -webkit-backdrop-filter: blur
   grid-template-areas: "top top" "side main" "player player";
 }
 
+.top-wrap { grid-area: top; }
+.promo-banner { display: none; }
 .topbar {
-  grid-area: top;
   display: flex;
   align-items: center;
   gap: 20px;
@@ -135,6 +184,7 @@ html.has-bg .player { backdrop-filter: blur(10px); -webkit-backdrop-filter: blur
   border-bottom: 1px solid var(--line);
 }
 .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 1.125rem; white-space: nowrap; }
+.brand span { font-family: "Permanent Marker", "Segoe Print", cursive; font-weight: 400; font-size: 1.25rem; letter-spacing: 0.02em; }
 .brand svg { color: var(--accent); width: 28px; height: 28px; }
 #search {
   flex: 1;
@@ -403,7 +453,7 @@ body.np-open .np { display: flex; }
 .np-time { display: flex; justify-content: space-between; width: 100%; color: var(--muted); font-size: 0.75rem; font-variant-numeric: tabular-nums; }
 .np-controls { display: flex; align-items: center; justify-content: center; gap: 18px; }
 .np-actions { display: flex; align-items: center; justify-content: center; gap: 8px; }
-.np.empty .np-wave, .np.empty .np-time, .np.empty .np-actions { visibility: hidden; }
+.np.no-track .np-wave, .np.no-track .np-time, .np.no-track .np-actions { visibility: hidden; }
 
 /* описание и метки времени */
 .np-info { width: 100%; margin-top: 8px; text-align: left; }
@@ -707,6 +757,8 @@ input[type="color"] { width: 36px; height: 28px; padding: 0; border: 0; backgrou
   }
   .topbar { padding: 8px 14px; gap: 12px; }
   .brand span { display: none; }
+  :root[data-theme="promodj"] .promo-banner { height: 56px !important; }
+  :root[data-theme="promodj"] .side-logo, :root[data-theme="promodj"] .side-contacts { display: none !important; }
   #search { max-width: none; }
   #bHelp { margin-left: 0; }
   #bHelp + #bSettings { margin-left: -8px; }
@@ -778,3 +830,53 @@ input[type="color"] { width: 36px; height: 28px; padding: 0; border: 0; backgrou
   .brand svg { width: 24px; height: 24px; }
   #bHelp + #bSettings { margin-left: -6px; }
 }
+
+/* ---------- рукописный шрифт для отдельных панелей (настройки) ---------- */
+html.f-left .sidebar,
+html.f-center .content,
+html.f-right .np { font-family: "Caveat", "Segoe Print", cursive; font-weight: 700; }
+html.f-left .nav-item, html.f-center .row-title, html.f-right .np-title { font-size: 1.35em; }
+html.f-center .row-title, html.f-center .row-folder { padding-right: 0.25em; }
+html.f-left .nav-label, html.f-left .side-contacts,
+html.f-center .row-folder, html.f-center .row-dur,
+html.f-right .np-sec, html.f-right .np-sub, html.f-right .np-time { font-size: 1.1rem; letter-spacing: 0; }
+html.f-left .nav-item .count { font-size: 1.05rem; }
+html.f-left .nav-hint { font-size: 1.05rem; }
+html.f-center .view-head h1 { font-size: calc(1.8rem * var(--hs)); }
+html.f-right .mark-name, html.f-right .mark-note, html.f-right .np-desc { font-size: 1.2rem; line-height: 1.3; }
+
+/* ---------- тема PromoDJ: баннер, логотип, контакты ---------- */
+.side-logo, .side-contacts { display: none; }
+:root[data-theme="promodj"] .promo-banner {
+  display: block;
+  height: 104px;
+  background: #fff url("img/promo-banner.jpg") center / contain no-repeat;
+  border-bottom: 1px solid var(--line);
+}
+:root[data-theme="promodj"] .side-logo {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  margin: 0 0 14px;
+  border-radius: 10px;
+  background: #fff url("img/promo-logo.jpg") center / cover no-repeat;
+  border: 1px solid var(--line);
+}
+:root[data-theme="promodj"] .side-contacts {
+  display: block;
+  margin: 22px 4px 4px;
+  padding: 12px 6px 0;
+  border-top: 1px solid var(--line);
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  color: var(--muted);
+}
+.side-contacts > div { margin-bottom: 4px; overflow-wrap: anywhere; }
+.side-contacts-title { text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.75rem; margin-bottom: 8px !important; }
+.side-contacts-name { color: var(--text); font-weight: 600; }
+html.f-left .side-contacts-name { font-weight: 700; }
+
+/* чекбоксы в настройках */
+.set-note { margin: -2px 0 6px; font-size: 0.8125rem; color: var(--muted); }
+.set-check { display: flex; align-items: center; gap: 10px; padding: 6px 0; cursor: pointer; }
+.set-check input { width: 18px; height: 18px; accent-color: var(--accent); flex: none; }

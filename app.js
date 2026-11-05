@@ -2,11 +2,19 @@
 (() => {
   const CFG = window.CONFIG || {};
   const BASE = (CFG.MUSIC_BASE_URL || "./").replace(/\/*$/, "/");
-  const SITE = CFG.SITE_TITLE || "Music";
+  // старое название из config.js, который уже лежит в репозитории, заменяем новым
+  const SITE = CFG.SITE_TITLE && CFG.SITE_TITLE !== "Bro Music" ? CFG.SITE_TITLE : "Villa Vibe";
+  // карточка для темы PromoDJ (можно переопределить в config.js: PROFILE: ["строка 1", "строка 2"])
+  const PROFILE = CFG.PROFILE || [
+    "Алексей Литвяков",
+    "Основной стиль: Techno",
+    "Любимые стили: Deep House, Dub Techno, Hard Techno, House, Tropical House",
+    "DJ, клаббер, слушатель",
+    "Дислокация: Россия, Санкт-Петербург",
+  ];
 
   /* ---------------------------------------------------------------- icons */
   const PATHS = {
-    note: "M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z",
     play: "M8 5v14l11-7z",
     pause: "M6 5h4v14H6zM14 5h4v14h-4z",
     prev: "M6 6h2v12H6zM9.5 12 18 6v12z",
@@ -15,7 +23,6 @@
     repeat: "M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z",
     heart: "M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z",
     plus: "M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z",
-    download: "M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z",
     timer: "M15 1H9v2h6V1zm-4 13h2V8h-2v6zm8.03-6.61 1.42-1.42c-.43-.51-.9-.99-1.41-1.41l-1.42 1.42A8.96 8.96 0 0 0 12 4c-4.97 0-9 4.03-9 9s4.02 9 9 9 9-4.03 9-9c0-2.12-.74-4.07-1.97-5.61zM12 20c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z",
     volume: "M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0 0 14 7.97v8.05c1.48-.73 2.5-2.25 2.5-4.02z",
     mute: "M16.5 12A4.5 4.5 0 0 0 14 7.97v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51A8.8 8.8 0 0 0 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3 3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06a8.99 8.99 0 0 0 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4 9.91 6.09 12 8.18V4z",
@@ -281,16 +288,23 @@
   }
 
   /* --------------------------------------------------------------- covers */
-  function coverEl(t, extra) {
-    const d = h("div", { class: "cover " + (extra || "") });
+  // Заполняет обложкой блок d. Картинка приезжает позже, поэтому добавляем её прямо в d
+  // (а не в промежуточный элемент) и только если в блоке всё ещё этот же трек.
+  function fillCover(d, t) {
+    d.dataset.cid = t.id;
     d.style.background = gradient(t.id);
-    d.append(h("span", { class: "cover-letter" }, (t.title[0] || "♪").toUpperCase()));
+    d.replaceChildren(h("span", { class: "cover-letter" }, (t.title[0] || "♪").toUpperCase()));
     const img = new Image();
     img.alt = "";
     img.decoding = "async";
-    img.onload = () => d.append(img);
+    img.onload = () => {
+      if (d.dataset.cid === t.id) d.append(img);
+    };
     img.src = urlOf(t.cover || t.id.replace(/\.[^./]+$/, "") + ".jpg");
     return d;
+  }
+  function coverEl(t, extra) {
+    return fillCover(h("div", { class: "cover " + (extra || "") }), t);
   }
 
   /* ------------------------------------------------------------- waveform */
@@ -388,6 +402,7 @@
   function renderSidebar() {
     const nav = $("#sidebar");
     nav.replaceChildren();
+    nav.append(h("div", { class: "side-logo", role: "img", "aria-label": SITE }));
     const validFavs = [...state.favs].filter((id) => state.byId.has(id)).length;
     nav.append(
       navItem("Все треки", state.tracks.length, { type: "all" }),
@@ -415,6 +430,9 @@
       const n = pl.tracks.filter((id) => state.byId.has(id)).length;
       nav.append(navItem(pl.name, n, { type: "pl", key: pl.id }));
     }
+    nav.append(
+      h("div", { class: "side-contacts" }, h("div", { class: "side-contacts-title" }, "Контакты"), ...PROFILE.map((line, i) => h("div", { class: i === 0 ? "side-contacts-name" : "" }, line)))
+    );
   }
 
   /* ---------------------------------------------------------- track lists */
@@ -533,7 +551,6 @@
     const favBtn = h("button", { class: "icon-btn fav-btn", "data-fav": t.id, "aria-label": "В избранное", title: "В избранное", html: icon("heart"), onclick: () => toggleFav(t.id) });
     const addBtn = h("button", { class: "icon-btn js-menu-btn", "aria-label": "Добавить в плейлист", title: "Добавить в плейлист", html: icon("plus") });
     addBtn.addEventListener("click", () => playlistMenu(addBtn, t.id));
-    const dl = h("a", { class: "icon-btn", href: urlOf(t.id), download: t.title + t.ext, target: "_blank", rel: "noopener", title: "Скачать", "aria-label": "Скачать", html: icon("download") });
 
     const playBtn = h("button", { class: "cover-play", "aria-label": "Играть / пауза", html: icon("play", "i-play") + icon("pause", "i-pause") });
     playBtn.addEventListener("click", () => toggleTrack(t.id, state.visible.slice()));
@@ -543,7 +560,7 @@
       { class: "row", "data-id": t.id },
       h("div", { class: "row-cover" }, coverEl(t), playBtn),
       h("div", { class: "row-body" }, h("div", { class: "row-top" }, title, h("div", { class: "row-folder" }, folderTitle(t.folder))), wave),
-      h("div", { class: "row-side" }, h("div", { class: "row-actions" }, favBtn, addBtn, dl), h("span", { class: "row-dur" }, t.duration ? fmt(t.duration) : ""))
+      h("div", { class: "row-side" }, h("div", { class: "row-actions" }, favBtn, addBtn), h("span", { class: "row-dur" }, t.duration ? fmt(t.duration) : ""))
     );
   }
 
@@ -1041,17 +1058,12 @@
   function updateNp() {
     const t = curTrack();
     const np = $("#np");
-    np.classList.toggle("empty", !t);
+    np.classList.toggle("no-track", !t);
     $("#npTitle").textContent = t ? t.title : "Выберите трек";
     $("#npSub").textContent = t ? folderTitle(t.folder) : "";
     const label = $("#npLabel");
     label.replaceChildren();
     if (t) label.append(coverEl(t));
-    const dl = $("#npDl");
-    if (t) {
-      dl.href = urlOf(t.id);
-      dl.setAttribute("download", t.title + t.ext);
-    } else dl.removeAttribute("href");
     loadInfo(t ? t.id : null);
     redrawNpWave();
   }
@@ -1062,12 +1074,12 @@
     $("#pTitle").textContent = t ? t.title : "Выберите трек";
     $("#pSub").textContent = t ? folderTitle(t.folder) : "";
     const cover = $("#pCover");
-    cover.replaceChildren();
-    if (t) {
-      const c = coverEl(t);
-      cover.style.background = c.style.background;
-      cover.append(...c.childNodes);
-    } else cover.style.background = "";
+    if (t) fillCover(cover, t);
+    else {
+      cover.replaceChildren();
+      cover.style.background = "";
+      delete cover.dataset.cid;
+    }
     syncFavUI();
     document.title = t ? `${t.title} · ${SITE}` : SITE;
     updateRows();
@@ -1135,7 +1147,7 @@
   }
 
   /* -------------------------------------------------------------- settings */
-  const DEFAULT_SETTINGS = { theme: "dark", hs: 100, ts: 100, accent: "", text: "", bg: "none", bgUrl: "", dim: 55 };
+  const DEFAULT_SETTINGS = { theme: "dark", hs: 100, ts: 100, accent: "", text: "", bg: "none", bgUrl: "", dim: 55, fl: false, fc: false, fr: false };
   const initialSettings = () => Object.assign({}, DEFAULT_SETTINGS, CFG.DEFAULT_SETTINGS || {});
   let settings = Object.assign(initialSettings(), store.get("settings", {}));
   let bgObjectUrl = "";
@@ -1186,6 +1198,9 @@
   function applySettings() {
     const r = document.documentElement;
     r.dataset.theme = settings.theme;
+    r.classList.toggle("f-left", !!settings.fl);
+    r.classList.toggle("f-center", !!settings.fc);
+    r.classList.toggle("f-right", !!settings.fr);
     r.style.setProperty("--ts", settings.ts / 100);
     r.style.setProperty("--hs", settings.hs / 100);
     r.style.setProperty("--dim", settings.dim / 100);
@@ -1242,8 +1257,18 @@
       return h("div", { class: "set-row" }, h("div", { class: "set-label" }, h("span", {}, label)), h("div", { class: "colors" }, ...items, picker));
     };
 
+    const checkRow = (label, key) => {
+      const input = h("input", { type: "checkbox", "aria-label": label });
+      input.checked = !!settings[key];
+      input.addEventListener("change", () => {
+        settings[key] = input.checked;
+        commit();
+      });
+      return h("label", { class: "set-check" }, input, h("span", {}, label));
+    };
+
     function draw() {
-      const themes = [["dark", "Тёмная"], ["black", "Чёрная"], ["light", "Светлая"]];
+      const themes = [["dark", "Тёмная"], ["black", "Чёрная"], ["light", "Светлая"], ["promodj", "PromoDJ"]];
       const fileInput = h("input", {
         type: "file",
         accept: "image/*",
@@ -1294,6 +1319,12 @@
         range("Размер текста", "ts", 85, 130, 5, "%"),
         colorRow("Цвет акцента", "accent", "--accent", ["#ff5500", "#2f9bff", "#22c55e", "#a855f7", "#ec4899", "#f5b301"]),
         colorRow("Цвет текста", "text", "--text", [cssVar("--text", "#f2f2f2").toLowerCase(), "#ffffff", "#ffd9b0", "#b8e2ff", "#c8f5d2", "#1c1c21"]),
+
+        h("div", { class: "set-head" }, "Рукописный шрифт"),
+        h("div", { class: "set-note" }, "Заменяет обычный шрифт на рукописный в выбранной части сайта."),
+        checkRow("Левая панель (разделы)", "fl"),
+        checkRow("Центральная панель (список треков)", "fc"),
+        checkRow("Правая панель (сейчас играет)", "fr"),
 
         h("div", { class: "set-head" }, "Фон"),
         h(
@@ -1393,7 +1424,8 @@
   /* -------------------------------------------------------------- controls */
   function initControls() {
     document.querySelectorAll("[data-icon]").forEach((el) => el.insertAdjacentHTML("afterbegin", icon(el.dataset.icon)));
-    $("#brandIcon").innerHTML = `<path d="${PATHS.note}"/>`;
+    $("#brandIcon").innerHTML =
+      '<g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.8"><path d="M11.4 22.2C12.4 17.5 12.8 13.5 13 9.4" stroke-width="2.4"/><path d="M13 9.4C9.6 4.2 5.6 4.4 2.8 6.8"/><path d="M13 9.4C9 8.4 5.2 10.2 3.6 14"/><path d="M13 9.4C12.6 5.6 14.4 3.2 17.4 2.2"/><path d="M13 9.4C16.8 5.6 20.4 6 22 9"/><path d="M13 9.4C17.2 9.6 19.8 12 20.6 15.6"/></g><circle cx="12" cy="10.8" r="1.3" fill="currentColor"/><circle cx="14.4" cy="10.9" r="1.3" fill="currentColor"/>';
     $("#brandName").textContent = SITE;
     setPlayingUI();
 
