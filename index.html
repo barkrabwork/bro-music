@@ -5,7 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#000000">
   <title>Villa Vibe Mixtapes</title>
-  <script>try{var s=JSON.parse(localStorage.getItem("bro.settings")||"{}"),d=document.documentElement;if(s.theme)d.dataset.theme=s.theme;if(s.fl)d.classList.add("f-left");if(s.fc)d.classList.add("f-center");if(s.fr)d.classList.add("f-right")}catch(e){}</script>
+  <script>try{var s=JSON.parse(localStorage.getItem("bro.settings")||"{}"),d=document.documentElement;if(s.theme)d.dataset.theme=s.theme==="black"?"dark":s.theme;if(s.fl)d.classList.add("f-left");if(s.fc)d.classList.add("f-center");if(s.fr)d.classList.add("f-right")}catch(e){}</script>
+  <link rel="icon" type="image/svg+xml" href="img/icon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="img/icon-32.png">
+  <link rel="apple-touch-icon" href="img/icon-180.png">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -13,6 +16,7 @@
   <div class="bg-dim"></div>
 
   <div class="app">
+    <div class="rome-bg" aria-hidden="true"><div class="rb-paint"></div></div>
     <header class="top-wrap">
       <div class="promo-banner" role="img" aria-label="Villa Vibe"></div>
       <div class="topbar">
@@ -30,9 +34,267 @@
     <aside class="np no-track" id="np" aria-label="Сейчас играет">
       <button class="icon-btn np-close" id="npClose" aria-label="Свернуть" title="Свернуть" data-icon="down"></button>
       <div class="np-inner">
-        <div class="vinyl" id="vinyl"><div class="disc"><div class="label" id="npLabel"></div></div></div>
+        <div class="wmx" id="wmx">
+          <div class="wm-win">
+            <div class="wm-tb"><span class="grip"></span><span>VILLA VIBE MIXTAPES</span><span class="grip"></span><span class="wbtns"><i>_</i><i>▫</i><i>×</i></span></div>
+            <div class="wm-body">
+              <div class="wm-lcd">
+                <div class="wm-st"><svg class="wm-ico" id="wmSt" viewBox="0 0 12 14" aria-hidden="true"><path d="M1 1h10v12H1z" fill="currentColor"/></svg><div class="wm-time" id="wmTime">0:00</div></div>
+                <div class="wm-spec" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+              </div>
+              <div class="wm-side">
+                <div class="wm-marq"><span id="wmTitle"></span></div>
+                <div class="wm-meta"><b>320</b>KBPS <b>44</b>KHZ <span class="led">MONO</span><span class="led on">STEREO</span></div>
+                <div class="wm-sliders">
+                  <div class="wm-sl" id="wmVol" title="Громкость"><i></i><b></b></div>
+                  <div class="wm-sl" title="Баланс"><i style="width:50%"></i><b style="left:calc(50% - 4px)"></b></div>
+                </div>
+              </div>
+            </div>
+            <div class="wm-seek" id="wmSeek" title="Перемотка"><i id="wmProg"></i><b id="wmThumb"></b></div>
+            <div class="wm-btns">
+              <button class="wm-btn" id="wmPrev" aria-label="Предыдущий" title="Предыдущий"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6h2v12H6zM9.5 12 18 6v12z"/></svg></button>
+              <button class="wm-btn" id="wmPlay" aria-label="Играть" title="Играть"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
+              <button class="wm-btn" id="wmPause" aria-label="Пауза" title="Пауза"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg></button>
+              <button class="wm-btn" id="wmStop" aria-label="Стоп" title="Стоп"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7h10v10H7z"/></svg></button>
+              <button class="wm-btn" id="wmNext" aria-label="Следующий" title="Следующий"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 6h2v12h-2zM6 18V6l8.5 6z"/></svg></button>
+              <span class="gap"></span>
+              <button class="wm-btn sm" id="wmShuf" title="Перемешать">SHUF</button>
+              <button class="wm-btn sm" id="wmRep" title="Повтор">REP</button>
+            </div>
+            <div class="wm-btns">
+              <button class="wm-btn sm" id="wmFav" title="В избранное">♥ FAV</button>
+              <button class="wm-btn sm js-menu-btn" id="wmAdd" title="Добавить в плейлист">+ PLAYLIST</button>
+              <button class="wm-btn sm js-menu-btn" id="wmLink" title="Скопировать ссылку">LINK</button>
+            </div>
+          </div>
+        </div>
+        <div class="cx" id="cx">
+          <div class="cx-deck">
+            <div class="cx-top">
+              <div class="cx-sw"><span class="cx-leg">ПЕРЕМЕШ.</span><button class="cx-slide" id="cxShuf" title="Перемешать" aria-label="Перемешать"><b></b></button></div>
+              <div class="cx-brand"><span class="cx-name">VILLA VIBE</span><span class="cx-leg">КАССЕТНАЯ ДЕКА</span></div>
+              <div class="cx-sw"><span class="cx-leg">ПОВТОР</span><button class="cx-slide" id="cxRep" title="Повтор" aria-label="Повтор"><b></b></button></div>
+            </div>
+            <div class="cx-bezel"><div class="cx-window"><div class="cx-tape"><svg viewBox="0 0 1212 765" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <defs>
+        <linearGradient id="body" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a2a2d"/><stop offset="1" stop-color="#121214"/></linearGradient>
+        <linearGradient id="foot" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#26262a"/><stop offset="1" stop-color="#0f0f11"/></linearGradient>
+        <linearGradient id="label" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#efe6c2"/><stop offset="1" stop-color="#e2d6a9"/></linearGradient>
+        <radialGradient id="hub" cx="0.38" cy="0.35" r="0.8"><stop offset="0" stop-color="#ffffff"/><stop offset="0.7" stop-color="#d9d9d6"/><stop offset="1" stop-color="#8f8f8c"/></radialGradient>
+        <radialGradient id="hole" cx="0.4" cy="0.35" r="0.8"><stop offset="0" stop-color="#e9e9e6"/><stop offset="1" stop-color="#6d6d6a"/></radialGradient>
+        <clipPath id="win"><rect x="255" y="250" width="705" height="195" rx="90"/></clipPath>
+        <g id="hubShape">
+          <circle r="66" fill="url(#hub)" stroke="#6f6f6c" stroke-width="3"/>
+          <circle r="42" fill="#3d3d3b"/>
+          <g fill="#f0f0ed"><rect x="-7" y="-42" width="14" height="17" rx="2" transform="rotate(0)"/><rect x="-7" y="-42" width="14" height="17" rx="2" transform="rotate(60)"/><rect x="-7" y="-42" width="14" height="17" rx="2" transform="rotate(120)"/><rect x="-7" y="-42" width="14" height="17" rx="2" transform="rotate(180)"/><rect x="-7" y="-42" width="14" height="17" rx="2" transform="rotate(240)"/><rect x="-7" y="-42" width="14" height="17" rx="2" transform="rotate(300)"/></g>
+          <circle r="66" fill="none" stroke="#fff" stroke-opacity="0.5" stroke-width="2"/>
+        </g>
+      </defs>
+
+      <!-- корпус -->
+      <rect x="2" y="2" width="1208" height="761" rx="30" fill="url(#body)"/>
+      <rect x="2" y="2" width="1208" height="761" rx="30" fill="none" stroke="#3b3b40" stroke-width="3"/>
+      <rect x="20" y="14" width="1172" height="8" rx="4" fill="#fff" opacity="0.06"/>
+
+      <!-- нижняя часть -->
+      <path d="M215 580H995L1050 761H160Z" fill="url(#foot)"/>
+      <path d="M215 580L160 761M995 580L1050 761" stroke="#3a3a3f" stroke-width="3"/>
+      <rect x="555" y="580" width="100" height="72" rx="10" fill="#1a1a1c" stroke="#3a3a3f" stroke-width="3"/>
+      <g>
+        <circle cx="310" cy="728" r="30" fill="url(#hole)" stroke="#111" stroke-width="5"/><circle cx="310" cy="728" r="14" fill="#2a2a2a"/>
+        <circle cx="435" cy="712" r="22" fill="#050505" stroke="#4a4a4f" stroke-width="4"/>
+        <circle cx="780" cy="712" r="22" fill="#050505" stroke="#4a4a4f" stroke-width="4"/>
+        <circle cx="900" cy="728" r="30" fill="url(#hole)" stroke="#111" stroke-width="5"/><circle cx="900" cy="728" r="14" fill="#2a2a2a"/>
+      </g>
+
+      <!-- этикетка -->
+      <path d="M105 60H1115L1157 104V560H65V104Z" fill="url(#label)"/>
+      <path d="M105 60H1115L1157 104V560H65V104Z" fill="none" stroke="#b9ab7c" stroke-width="2"/>
+
+      <!-- «60» и линейки -->
+      <text x="148" y="214" font-family="Arial Rounded MT Bold, Arial, Helvetica, sans-serif" font-weight="700" font-size="150" textLength="180" lengthAdjust="spacingAndGlyphs" fill="#4a3f2c">60</text>
+      <g stroke="#5c4d33" stroke-width="3.5" fill="none" stroke-linecap="round">
+        <path d="M371 118V228"/><path d="M371 130H965"/><path d="M371 176H965"/><path d="M371 222H965"/>
+        <rect x="992" y="136" width="128" height="92" rx="16"/>
+      </g>
+      <!-- надписи от руки на линейках -->
+      <text id="cxInkA" x="384" y="168" font-family="Permanent Marker, Segoe Print, cursive" font-size="36" fill="#1d2f6b">Summer Set</text>
+      <text id="cxInkB" x="384" y="214" font-family="Permanent Marker, Segoe Print, cursive" font-size="30" fill="#1d2f6b">Sets 2025</text>
+
+      <text transform="translate(176 418) rotate(-90)" font-family="Arial, sans-serif" font-weight="700" font-size="30" textLength="140" lengthAdjust="spacingAndGlyphs" fill="#4a3f2c">08.1985г.</text>
+
+      <!-- окно с катушками -->
+      <rect x="255" y="250" width="705" height="195" rx="90" fill="#121212"/>
+      <g clip-path="url(#win)">
+        <circle id="cxTapeL" cx="347" cy="347" r="92" fill="#3b2a1c"/>
+        <circle id="cxTapeR" cx="863" cy="347" r="72" fill="#3b2a1c"/>
+      </g>
+      <rect x="480" y="283" width="255" height="70" rx="6" fill="#262626"/>
+      <rect x="480" y="283" width="255" height="70" rx="6" fill="none" stroke="#3d3d3d" stroke-width="3"/>
+      <rect x="490" y="291" width="235" height="8" rx="3" fill="#fff" opacity="0.06"/>
+      <g transform="translate(347 347)"><g class="hub"><use href="#hubShape"/></g></g>
+      <g transform="translate(863 347)"><g class="hub"><use href="#hubShape"/></g></g>
+      <path d="M300 262C420 250 620 262 740 258C720 270 600 270 300 278Z" fill="#fff" opacity="0.07"/>
+
+      <!-- логотип -->
+      <g fill="#4a3f2c">
+        <text x="1000" y="372" font-family="Arial Black, Arial, sans-serif" font-weight="900" font-style="italic" font-size="116" textLength="90" lengthAdjust="spacingAndGlyphs">К</text>
+        <clipPath id="globe"><circle cx="1112" cy="346" r="27"/></clipPath>
+        <g clip-path="url(#globe)">
+          <rect x="1085" y="319" width="54" height="54" fill="#4a3f2c"/>
+          <rect x="1085" y="334" width="54" height="4" fill="#ece3bf"/>
+          <rect x="1085" y="346" width="54" height="4" fill="#ece3bf"/>
+          <rect x="1085" y="358" width="54" height="4" fill="#ece3bf"/>
+        </g>
+        <text x="988" y="408" font-family="Arial, sans-serif" font-weight="800" font-style="italic" font-size="26" textLength="140" lengthAdjust="spacingAndGlyphs">КОНТАК</text>
+      </g>
+
+      <!-- нижние надписи этикетки -->
+      <g fill="#4a3f2c" font-family="Arial, Helvetica, sans-serif" font-weight="700">
+        <text x="130" y="528" font-size="76" textLength="66" lengthAdjust="spacingAndGlyphs">A</text>
+        <text x="190" y="497" font-size="29" textLength="176" lengthAdjust="spacingAndGlyphs">ССОФОТО</text>
+        <text x="190" y="532" font-size="29" textLength="176" lengthAdjust="spacingAndGlyphs">SSOFOTO</text>
+        <text x="420" y="494" font-size="28" textLength="418" lengthAdjust="spacingAndGlyphs">МАГНИТОФОННАЯ</text>
+        <text x="420" y="535" font-size="40" textLength="424" lengthAdjust="spacingAndGlyphs">КАССЕТА  МК-60-1</text>
+        <text x="906" y="497" font-size="28" textLength="214" lengthAdjust="spacingAndGlyphs">Цена 4 руб.</text>
+        <text x="898" y="535" font-size="27" textLength="232" lengthAdjust="spacingAndGlyphs">137-1973/79</text>
+      </g>
+    </svg></div><div class="cx-glass"></div></div></div>
+            <div class="cx-strip">
+              <div class="cx-counter"><span class="cx-leg">СЧЁТЧИК</span><div class="cx-digits" id="cxDigits"><span>0</span><span>0</span><span class="sep">:</span><span>0</span><span>0</span></div></div>
+              <div class="cx-sl"><span class="cx-leg">ГРОМКОСТЬ</span><div class="cx-groove" id="cxVol" title="Громкость"><i></i><b></b></div></div>
+              <div class="cx-sl"><span class="cx-leg">ЛЕНТА</span><div class="cx-groove" id="cxSeek" title="Перемотка"><i id="cxSeekFill"></i><b id="cxSeekThumb"></b></div></div>
+            </div>
+            <div class="cx-keys">
+              <div class="cx-kcol"><span class="cx-leg">◄◄<br>НАЗАД</span><div class="cx-slot"><button class="cx-key" id="cxPrev" title="Предыдущий" aria-label="Предыдущий"></button></div></div>
+              <div class="cx-kcol"><span class="cx-leg">►<br>ВОСПР.</span><div class="cx-slot"><button class="cx-key" id="cxPlay" title="Играть" aria-label="Играть"></button></div></div>
+              <div class="cx-kcol"><span class="cx-leg">❚❚<br>ПАУЗА</span><div class="cx-slot"><button class="cx-key" id="cxPause" title="Пауза" aria-label="Пауза"></button></div></div>
+              <div class="cx-kcol"><span class="cx-leg">■<br>СТОП</span><div class="cx-slot"><button class="cx-key" id="cxStop" title="Стоп" aria-label="Стоп"></button></div></div>
+              <div class="cx-kcol"><span class="cx-leg">►►<br>ВПЕРЁД</span><div class="cx-slot"><button class="cx-key" id="cxNext" title="Следующий" aria-label="Следующий"></button></div></div>
+            </div>
+            <div class="cx-small">
+              <div class="cx-kcol"><span class="cx-leg">ИЗБР.</span><div class="cx-slot s"><button class="cx-key sm fav" id="cxFav" title="В избранное" aria-label="В избранное"></button></div></div>
+              <div class="cx-kcol"><span class="cx-leg">В ПЛЕЙЛ.</span><div class="cx-slot s"><button class="cx-key sm js-menu-btn" id="cxAdd" title="Добавить в плейлист" aria-label="Добавить в плейлист"></button></div></div>
+              <div class="cx-kcol"><span class="cx-leg">ССЫЛКА</span><div class="cx-slot s"><button class="cx-key sm js-menu-btn" id="cxLink" title="Скопировать ссылку" aria-label="Скопировать ссылку"></button></div></div>
+            </div>
+          </div>
+        </div>
+        <div class="lf" id="lf">
+          <div class="lf-scene"><svg viewBox="0 0 340 322" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+    <defs>
+      <linearGradient id="lfSky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#050520"></stop><stop offset="0.55" stop-color="#10124e"></stop><stop offset="1" stop-color="#1f2386"></stop></linearGradient>
+      <linearGradient id="lfWallL" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a92bd0"></stop><stop offset="1" stop-color="#5a1478"></stop></linearGradient>
+      <linearGradient id="lfWallR" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4a1670"></stop><stop offset="1" stop-color="#26093d"></stop></linearGradient>
+      <linearGradient id="lfSill" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#53207c"></stop><stop offset="1" stop-color="#2c1048"></stop></linearGradient>
+      <filter id="lfGlowN" x="-80%" y="-30%" width="260%" height="160%"><feGaussianBlur stdDeviation="3" result="b"></feGaussianBlur><feMerge><feMergeNode in="b"></feMergeNode><feMergeNode in="b"></feMergeNode></feMerge></filter>
+      <filter id="lfGlowS" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="0.7" result="b"></feGaussianBlur><feMerge><feMergeNode in="b"></feMergeNode><feMergeNode in="SourceGraphic"></feMergeNode></feMerge></filter>
+      <filter id="lfSoft" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2.4"></feGaussianBlur></filter>
+      <filter id="lfBlur14" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="9"></feGaussianBlur></filter>
+      <pattern id="lfBrickw" width="14" height="7" patternUnits="userSpaceOnUse"><rect width="14" height="7" fill="#170f38"></rect><rect x="0.5" y="0.5" width="6" height="2.8" fill="#33225e"></rect><rect x="7.5" y="0.5" width="6" height="2.8" fill="#2b1c52"></rect><rect x="-3" y="4" width="6" height="2.8" fill="#2b1c52"></rect><rect x="4" y="4" width="6" height="2.8" fill="#33225e"></rect><rect x="11" y="4" width="6" height="2.8" fill="#2b1c52"></rect></pattern>
+      <linearGradient id="lfShadeR" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#0a0620" stop-opacity="0"></stop><stop offset="1" stop-color="#0a0620" stop-opacity="0.65"></stop></linearGradient>
+      <clipPath id="lfSillClip"><polygon points="20,262 320,262 336,302 4,302"></polygon></clipPath>
+      <radialGradient id="lfWallGlow" cx="98" cy="128" r="132" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#ff5fe8" stop-opacity="0.62"></stop><stop offset="0.5" stop-color="#ff3fe0" stop-opacity="0.26"></stop><stop offset="1" stop-color="#ff3fe0" stop-opacity="0"></stop></radialGradient>
+      <radialGradient id="lfSkyHalo" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#ff3fe0" stop-opacity="0.34"></stop><stop offset="1" stop-color="#ff3fe0" stop-opacity="0"></stop></radialGradient>
+      <linearGradient id="lfSillH" x1="4" y1="0" x2="336" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#ff5fe8" stop-opacity="0.62"></stop><stop offset="0.5" stop-color="#ff3fe0" stop-opacity="0.34"></stop><stop offset="1" stop-color="#ff3fe0" stop-opacity="0.16"></stop></linearGradient>
+      <linearGradient id="lfSillH2" x1="34" y1="0" x2="346" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#ff5fe8" stop-opacity="0.72"></stop><stop offset="0.55" stop-color="#ff3fe0" stop-opacity="0.4"></stop><stop offset="1" stop-color="#ff3fe0" stop-opacity="0.18"></stop></linearGradient>
+      <linearGradient id="lfSillFade" x1="0" y1="262" x2="0" y2="302" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#12041c" stop-opacity="0"></stop><stop offset="1" stop-color="#12041c" stop-opacity="0.5"></stop></linearGradient>
+      <clipPath id="lfWin"><rect x="34" y="14" width="272" height="248"></rect></clipPath>
+    </defs>
+      <rect width="340" height="322" fill="#06020d"></rect>
+      <path d="M0 0H30V268H0Z" fill="url(#lfWallL)"></path><path d="M5 16H11V248H5Z" fill="#ff8cf2" opacity="0.28"></path>
+      <path d="M310 0H340V268H310Z" fill="url(#lfWallR)"></path><path d="M326 20H331V230H326Z" fill="#a96bff" opacity="0.15"></path>
+      <rect x="30" y="10" width="280" height="256" fill="#0a0414"></rect>
+      
+    <rect x="34" y="14" width="272" height="248" fill="url(#lfSky)"></rect>
+    <g clip-path="url(#lfWin)">
+      <g fill="#fff4ff"><circle class="tw" cx="52" cy="30" r="1.2"></circle><circle class="tw" cx="96" cy="46" r="1"></circle><circle class="tw" cx="140" cy="24" r="1.2"></circle><circle class="tw" cx="176" cy="52" r="1"></circle><circle class="tw" cx="262" cy="34" r="1.2"></circle><circle class="tw" cx="288" cy="62" r="1"></circle><circle class="tw" cx="214" cy="22" r="1"></circle><circle class="tw" cx="190" cy="40" r="1"></circle></g>
+      <path d="M150 84q18-20 48-12q24-16 52 2q20-8 36 10H150Z" fill="#232a8c" opacity="0.8"></path><path d="M60 62q16-14 38-8q18-10 40 6H60Z" fill="#1c2272" opacity="0.8"></path>
+      <path d="M34 156Q86 118 136 132T230 122T306 142V190H34Z" fill="#0f1260"></path>
+      <!-- дальний дом -->
+      <rect x="34" y="164" width="272" height="98" fill="#231a58"></rect>
+      <rect x="34" y="158" width="272" height="14" fill="#120c34"></rect>
+      <polygon points="190,158 222,128 254,158" fill="#120c34"></polygon><rect x="198" y="148" width="48" height="12" fill="#1d1450"></rect>
+      <rect x="204" y="146" width="16" height="12" fill="#6b5fe8"></rect><rect x="224" y="146" width="16" height="12" fill="#4a40b8"></rect><path d="M220 146V158M204 152H240" stroke="#120c34" stroke-width="1.6"></path>
+      <rect x="270" y="116" width="16" height="44" fill="#120c34"></rect><rect x="267" y="112" width="22" height="6" fill="#120c34"></rect>
+      <g stroke="#120c34" stroke-width="2.5"><rect x="170" y="186" width="34" height="32" fill="#4a40b8"></rect><rect x="220" y="186" width="34" height="32" fill="#6b5fe8"></rect><rect x="262" y="186" width="34" height="32" fill="#3a3399"></rect></g>
+      <g stroke="#120c34" stroke-width="2"><path d="M187 186V218M170 202H204M237 186V218M220 202H254M279 186V218M262 202H296"></path></g>
+      <rect x="196" y="224" width="58" height="8" fill="#120c34"></rect><rect x="204" y="232" width="4" height="30" fill="#120c34"></rect><rect x="242" y="232" width="4" height="30" fill="#120c34"></rect><rect x="212" y="236" width="24" height="26" fill="#0d0828"></rect><rect x="216" y="240" width="16" height="9" fill="#4a40b8"></rect>
+      <ellipse cx="180" cy="262" rx="20" ry="9" fill="#120c34"></ellipse><ellipse cx="300" cy="262" rx="16" ry="8" fill="#120c34"></ellipse>
+      
+      <rect x="34" y="14" width="42" height="248" fill="url(#lfBrickw)"></rect><rect x="34" y="14" width="42" height="248" fill="#0a0620" opacity="0.3"></rect>
+      <circle class="halo" cx="118" cy="130" r="96" fill="url(#lfSkyHalo)"></circle>
+      <rect x="34" y="14" width="42" height="248" fill="url(#lfWallGlow)" style="mix-blend-mode:screen"></rect>
+      <rect x="72" y="14" width="6" height="248" fill="#0a0620" opacity="0.7"></rect>
+      <rect x="70.5" y="14" width="2" height="248" fill="#ff7bf0" opacity="0.5"></rect>
+      <rect x="42" y="64" width="14" height="16" fill="#6b5fe8"></rect><rect x="42" y="94" width="14" height="16" fill="#3a3399"></rect><rect x="42" y="124" width="14" height="16" fill="#6b5fe8"></rect><rect x="42" y="154" width="14" height="16" fill="#3a3399"></rect><rect x="42" y="184" width="14" height="16" fill="#6b5fe8"></rect><rect x="42" y="214" width="14" height="16" fill="#3a3399"></rect>
+      <g filter="url(#lfSoft)" fill="#ff8cf2" opacity="0.7"><circle cx="76" cy="44" r="7"></circle><circle cx="76" cy="208" r="7"></circle></g>
+      <path d="M76 44L100 44" stroke="#07041a" stroke-width="4" stroke-linecap="round"></path><path d="M76 43L100 43" stroke="#6a58a8" stroke-width="0.8" stroke-linecap="round" opacity="0.7"></path><path d="M76 208L100 208" stroke="#07041a" stroke-width="4" stroke-linecap="round"></path><path d="M76 207L100 207" stroke="#6a58a8" stroke-width="0.8" stroke-linecap="round" opacity="0.7"></path><rect x="72" y="40" width="6" height="8" fill="#07041a"></rect><rect x="72" y="204" width="6" height="8" fill="#07041a"></rect>
+      <g class="nsign" opacity="0.96">
+      <polygon points="99.4,26.0 142.6,26.0 144.0,238.0 98.0,238.0" fill="#ff3fe0" opacity="0.6" filter="url(#lfGlowN)" stroke-linejoin="round"></polygon>
+      <polygon points="99.4,26.0 142.6,26.0 144.0,238.0 98.0,238.0" fill="#a91bb0" stroke="#ff6bec" stroke-width="2.8" stroke-linejoin="round"></polygon>
+      <polygon points="104.4,29.0 137.6,29.0 138.9,235.0 103.1,235.0" fill="none" stroke="#ffd9ff" stroke-width="1.6" stroke-linejoin="round"></polygon>
+      <g fill="none" stroke="#ffeaff" stroke-width="1.47" text-anchor="middle" filter="url(#lfGlowS)"><text class="" x="121.0" y="56.0" font-size="23.7">V</text><text class="" x="121.0" y="75.9" font-size="23.8">I</text><text class="" x="121.0" y="95.9" font-size="24.0">L</text><text class="off1" x="121.0" y="116.0" font-size="24.1">L</text><text class="" x="121.0" y="136.2" font-size="24.3">A</text><text class="" x="121.0" y="164.8" font-size="24.6">V</text><text class="" x="121.0" y="185.5" font-size="24.7">I</text><text class="off2" x="121.0" y="206.2" font-size="24.9">B</text><text class="" x="121.0" y="227.1" font-size="25.0">E</text></g></g>
+      <g clip-path="url(#lfWin)" fill="#ffe3ff" opacity="0.07"><polygon points="150,14 196,14 120,262 74,262"></polygon><polygon points="214,14 232,14 156,262 138,262"></polygon></g>
+    </g>
+    <path d="M34 14V262" stroke="#ff3fe0" stroke-width="2" opacity="0.45"></path><rect x="34" y="14" width="272" height="248" fill="none" stroke="#120719" stroke-width="3"></rect>
+      <path d="M20 262H320L336 302H4Z" fill="url(#lfSill)"></path>
+      <g stroke="#1b0a30" stroke-width="1.2" opacity="0.7"><path d="M12 276H328M8 288H332"></path></g>
+      <rect x="0" y="262" width="340" height="40" fill="url(#lfSillH)" opacity="0.85" clip-path="url(#lfSillClip)" style="mix-blend-mode:screen"></rect>
+         <rect x="0" y="262" width="340" height="40" fill="url(#lfSillFade)" clip-path="url(#lfSillClip)"></rect>
+      <rect x="4" y="302" width="332" height="12" fill="#240a38"></rect><rect x="0" y="314" width="340" height="8" fill="#06020d"></rect>
+      <rect x="30" y="14" width="5" height="248" fill="#ff5fe8" opacity="0.55" filter="url(#lfSoft)"></rect>
+         <g fill="#ffd9ff" clip-path="url(#lfSillClip)"><circle class="tw" cx="60" cy="276" r="1.3" opacity="0.7"></circle><circle class="tw" cx="110" cy="270" r="1" opacity="0.7"></circle><circle class="tw" cx="158" cy="281" r="1.2" opacity="0.7"></circle><circle class="tw" cx="210" cy="272" r="1" opacity="0.7"></circle><circle class="tw" cx="250" cy="286" r="1.1" opacity="0.7"></circle><circle class="tw" cx="92" cy="288" r="0.9" opacity="0.7"></circle></g>
+      <!-- кружка справа, тень падает вправо от вывески -->
+      <ellipse cx="272" cy="282" rx="32" ry="4.5" fill="#12041c" opacity="0.8"></ellipse>
+      <path d="M238 240H274V268Q274 281 261 281H251Q238 281 238 268Z" fill="#120719"></path>
+      <path d="M238 242V268Q238 280 250 281" fill="none" stroke="#ff5fe8" stroke-width="2.4" stroke-linecap="round" opacity="0.95"></path>
+      <path d="M274 246Q292 246 292 261Q292 275 272 273" fill="none" stroke="#120719" stroke-width="6" stroke-linecap="round"></path>
+      <ellipse cx="256" cy="240" rx="18" ry="4.8" fill="#2a0f3d" stroke="#ff7bf0" stroke-width="1.3"></ellipse>
+      <g fill="none" stroke="#efe4ff" stroke-width="4.5" stroke-linecap="round" filter="url(#lfSoft)">
+        <path class="steam" d="M248 234q-9-16 0-30q9-14 0-30"></path><path class="steam" d="M258 234q9-16 0-30q-9-14 0-30"></path><path class="steam" d="M266 234q-8-14 0-26q8-12 0-24"></path>
+      </g>
+    </svg></div>
+          <div class="lf-ctl">
+            <button class="lf-btn" id="lfPrev" title="Предыдущий" aria-label="Предыдущий"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6h2v12H6zM9.5 12 18 6v12z"/></svg></button>
+            <button class="lf-btn main" id="lfPlay" title="Играть" aria-label="Играть"></button>
+            <button class="lf-btn" id="lfNext" title="Следующий" aria-label="Следующий"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 6h2v12h-2zM6 18V6l8.5 6z"/></svg></button>
+            <div class="lf-prog"><div class="l"><b id="lfTime">0:00</b><span id="lfDur">0:00</span></div><div class="lf-track" id="lfTrack" title="Перемотка"><i></i><b></b></div></div>
+          </div>
+          <div class="lf-acts">
+            <button class="lf-act" id="lfFav" title="В избранное"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>ИЗБРАННОЕ</button>
+            <button class="lf-act js-menu-btn" id="lfAdd" title="Добавить в плейлист"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>ПЛЕЙЛИСТ</button>
+            <button class="lf-act js-menu-btn" id="lfLink" title="Скопировать ссылку"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg>ССЫЛКА</button>
+          </div>
+        </div>
+        <div class="rm" id="rm">
+          <div class="rm-top">
+            <div class="cover rm-cover" id="rmCover"></div>
+            <div class="rm-info">
+              <div class="rm-ey">Сейчас играет</div>
+              <div class="rm-title" id="rmTitle">Выберите трек</div>
+              <div class="rm-sub" id="rmSub"></div>
+              <div class="rm-time"><span id="rmTime">0:00</span> <small>/ <span id="rmDur">0:00</span></small></div>
+            </div>
+          </div>
+          <div class="rm-bar" id="rmBar" title="Перемотка"><i></i><b></b></div>
+          <div class="rm-brow">
+            <button class="rm-bronze" id="rmPrev" title="Предыдущий" aria-label="Предыдущий"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6h2v12H6zM9.5 12 18 6v12z"/></svg></button>
+            <button class="rm-big" id="rmPlay" title="Играть" aria-label="Играть"></button>
+            <button class="rm-bronze" id="rmNext" title="Следующий" aria-label="Следующий"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 6h2v12h-2zM6 18V6l8.5 6z"/></svg></button>
+          </div>
+          <div class="rm-acts">
+            <button class="rm-act" id="rmFav" title="В избранное">Избранное</button>
+            <button class="rm-act js-menu-btn" id="rmAdd" title="Добавить в плейлист">Плейлист</button>
+            <button class="rm-act js-menu-btn" id="rmLink" title="Скопировать ссылку">Ссылка</button>
+          </div>
+        </div>
+        <div class="vinyl" id="vinyl">
+          <div class="disc"><div class="label" id="npLabel"></div></div>
+        </div>
         <div class="np-title" id="npTitle">Выберите трек</div>
         <div class="np-sub" id="npSub"></div>
+        <canvas class="np-viz" id="viz" hidden aria-hidden="true"></canvas>
         <div class="np-wave" id="npWave" title="Нажмите, чтобы перемотать"><canvas id="npCanvas" aria-label="Волновая форма"></canvas></div>
         <div class="np-time"><span id="npCur">0:00</span><span id="npDur">0:00</span></div>
         <div class="np-controls">
@@ -45,7 +307,10 @@
           <button class="icon-btn js-menu-btn" id="npAdd" aria-label="Добавить в плейлист" title="Добавить в плейлист" data-icon="plus"></button>
           <button class="icon-btn js-menu-btn" id="npShare" aria-label="Поделиться ссылкой" title="Скопировать ссылку" data-icon="link"></button>
         </div>
-        <div class="np-info" id="npInfo" hidden></div>
+        <div class="jcard" id="jcard">
+          <div class="jc-head"><h2 class="jc-title" id="jcTitle"></h2><div class="jc-sub" id="jcSub"></div></div>
+          <div class="np-info" id="npInfo" hidden></div>
+        </div>
       </div>
     </aside>
 

@@ -51,17 +51,6 @@
   --bar-bg: var(--bar);
   color-scheme: dark;
 }
-:root[data-theme="black"] {
-  --bg: #000;
-  --panel: #0c0c0c;
-  --panel-2: #181818;
-  --line: #1e1e1e;
-  --field: #1b1b1b;
-  --field-focus: #222;
-  --menu-bg: #181818;
-  --menu-line: #303030;
-  --menu-hover: #262626;
-}
 :root[data-theme="light"] {
   --bg: #f3f3f5;
   --panel: #fff;
@@ -880,3 +869,738 @@ html.f-left .side-contacts-name { font-weight: 700; }
 .set-note { margin: -2px 0 6px; font-size: 0.8125rem; color: var(--muted); }
 .set-check { display: flex; align-items: center; gap: 10px; padding: 6px 0; cursor: pointer; }
 .set-check input { width: 18px; height: 18px; accent-color: var(--accent); flex: none; }
+
+/* ============================================================
+   Новые темы: Lo-Fi, VHS, Кассета, Закат
+   ============================================================ */
+
+/* метка «Новое» */
+.badge-new {
+  flex: none;
+  align-self: center;
+  padding: 1px 8px;
+  border-radius: 10px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  line-height: 1.5;
+}
+
+/* визуализатор звука (правая панель) */
+.np-viz { display: block; width: 100%; height: 56px; margin-top: -2px; }
+
+/* кнопки тем в настройках: в несколько рядов */
+.seg { flex-wrap: wrap; }
+.seg button { flex: 1 0 calc(25% - 6px); min-width: 74px; }
+
+/* ---------- Lo-Fi: тёплый вечер, пыльная сирень и персик, плёночное зерно ---------- */
+:root[data-theme="lofi"] {
+  /* палитра подогнана под правую панель: тёмный фиолет и неоновый розовый */
+  --bg: #0f0818;
+  --panel: #160b24;
+  --panel-2: #241339;
+  --line: #321d4e;
+  --bar: #0a0511;
+  --text: #f0e6f8;
+  --text-2: #dccdea;
+  --muted: #a38bb4;
+  --icon: #c9a8e8;
+  --icon-strong: #fff;
+  --accent: #ff5fe8;
+  --wave: #5a3b86;
+  --track: #3b2660;
+  --field: #1d1030;
+  --field-focus: #281641;
+  --menu-bg: #1d1030;
+  --menu-line: #3b2660;
+  --menu-hover: #2a1848;
+  --hover: rgba(255, 95, 232, 0.1);
+  --play-bg: #ff5fe8;
+  --play-fg: #1a0626;
+  --cover-bg: #2a1848;
+  --shadow: rgba(0, 0, 0, 0.6);
+  color-scheme: dark;
+}
+:root[data-theme="lofi"] .row { border-radius: 20px; }
+:root[data-theme="lofi"] .row-cover .cover, :root[data-theme="lofi"] .cover-play { border-radius: 14px; }
+:root[data-theme="lofi"] .btn, :root[data-theme="lofi"] .nav-item { border-radius: 16px; }
+:root[data-theme="lofi"] .nav-item.active { background: color-mix(in srgb, var(--accent) 20%, transparent); }
+
+:root[data-theme="lofi"] .nav-item.active { box-shadow: inset 3px 0 0 var(--accent); }
+:root[data-theme="lofi"] .row.active { border-color: color-mix(in srgb, var(--accent) 55%, transparent); box-shadow: 0 0 14px color-mix(in srgb, var(--accent) 25%, transparent); }
+:root[data-theme="lofi"] .btn { box-shadow: 0 0 14px color-mix(in srgb, var(--accent) 45%, transparent); color: #1a0626; }
+:root[data-theme="lofi"] .brand span { text-shadow: 0 0 10px rgba(255, 95, 232, 0.6); }
+:root[data-theme="lofi"] .brand svg { filter: drop-shadow(0 0 5px rgba(255, 95, 232, 0.7)); }
+:root[data-theme="lofi"] .topbar, :root[data-theme="lofi"] .player { border-color: var(--line); }
+:root[data-theme="lofi"] body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  pointer-events: none;
+  opacity: 0.06;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ---------- VHS: ночная плёнка, розовый и голубой неон, линии развёртки ---------- */
+:root[data-theme="vhs"] {
+  --bg: #0b0a1a;
+  --panel: #120f2b;
+  --panel-2: #1a1540;
+  --line: #2a2260;
+  --bar: #07061a;
+  --text: #e8e6ff;
+  --text-2: #cfcaf5;
+  --muted: #8b86c4;
+  --icon: #a6a0e6;
+  --icon-strong: #fff;
+  --accent: #ff2e97;
+  --wave: #3d3a8c;
+  --track: #2f2a6e;
+  --field: #17133a;
+  --field-focus: #1f1a4d;
+  --menu-bg: #17133a;
+  --menu-line: #2f2a6e;
+  --menu-hover: #221c55;
+  --hover: rgba(120, 110, 255, 0.14);
+  --play-bg: #00e5ff;
+  --play-fg: #07061a;
+  --cover-bg: #221c55;
+  --shadow: rgba(0, 0, 0, 0.6);
+  color-scheme: dark;
+}
+:root[data-theme="vhs"] body { font-family: Consolas, "Lucida Console", "Courier New", monospace; }
+:root[data-theme="vhs"] .view-head h1,
+:root[data-theme="vhs"] .np-title,
+:root[data-theme="vhs"] .group-title,
+:root[data-theme="vhs"] .brand span { text-shadow: 1.5px 0 rgba(255, 46, 151, 0.75), -1.5px 0 rgba(0, 229, 255, 0.75); }
+:root[data-theme="vhs"] .row, :root[data-theme="vhs"] .np-wave { border-radius: 4px; }
+:root[data-theme="vhs"] .row.active { border-color: var(--accent); box-shadow: 0 0 14px color-mix(in srgb, var(--accent) 45%, transparent); }
+:root[data-theme="vhs"] .btn { border-radius: 4px; box-shadow: 0 0 12px color-mix(in srgb, var(--accent) 50%, transparent); }
+:root[data-theme="vhs"] body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  pointer-events: none;
+  background:
+    repeating-linear-gradient(to bottom, rgba(0, 0, 0, 0) 0 2px, rgba(0, 0, 0, 0.24) 3px),
+    radial-gradient(ellipse at center, transparent 60%, rgba(0, 0, 0, 0.45) 100%);
+}
+:root[data-theme="vhs"] body::before {
+  content: "";
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: -12%;
+  height: 10%;
+  z-index: 89;
+  pointer-events: none;
+  background: linear-gradient(to bottom, transparent, rgba(255, 255, 255, 0.05), transparent);
+  animation: vhs-scan 8s linear infinite;
+}
+@keyframes vhs-scan { to { top: 112%; } }
+@media (prefers-reduced-motion: reduce) { :root[data-theme="vhs"] body::before { animation: none; display: none; } }
+
+/* ---------- Кассетная ностальгия: бумага, коричневые чернила, красная наклейка ---------- */
+:root[data-theme="cassette"] {
+  --bg: #e8dcc2;
+  --panel: #f2e8d0;
+  --panel-2: #e2d3b2;
+  --line: #cdbb94;
+  --bar: #efe3c6;
+  --text: #3a2a1f;
+  --text-2: #4d3a2c;
+  --muted: #8a7358;
+  --icon: #6b5440;
+  --icon-strong: #2a1c13;
+  --accent: #d9482b;
+  --wave: #cdb98e;
+  --track: #cdbb94;
+  --field: #e9ddc0;
+  --field-focus: #e2d4b3;
+  --menu-bg: #f2e8d0;
+  --menu-line: #cdbb94;
+  --menu-hover: #e8dcc2;
+  --hover: rgba(90, 60, 30, 0.08);
+  --play-bg: #3a2a1f;
+  --play-fg: #f2e8d0;
+  --cover-bg: #d9c9a3;
+  --shadow: rgba(70, 45, 20, 0.28);
+  color-scheme: light;
+}
+:root[data-theme="cassette"] .view-head h1,
+:root[data-theme="cassette"] .group-title,
+:root[data-theme="cassette"] .np-title { font-family: "Courier New", Courier, monospace; font-weight: 700; }
+:root[data-theme="cassette"] .row { border: 1px dashed var(--line); }
+:root[data-theme="cassette"] .row.active { border-style: solid; }
+
+/* ---------- Закат: тропический градиент и силуэты пальм ---------- */
+:root[data-theme="sunset"] {
+  --bg: #2a0f45;
+  --panel: rgba(32, 10, 56, 0.55);
+  --panel-2: rgba(255, 255, 255, 0.09);
+  --line: rgba(255, 255, 255, 0.15);
+  --bar: rgba(24, 6, 44, 0.72);
+  --text: #fff3ea;
+  --text-2: #ffe2d2;
+  --muted: #d9a8bd;
+  --icon: #ffcfbf;
+  --icon-strong: #fff;
+  --accent: #ff9f43;
+  --wave: rgba(255, 214, 200, 0.5);
+  --track: rgba(255, 255, 255, 0.28);
+  --field: rgba(255, 255, 255, 0.11);
+  --field-focus: rgba(255, 255, 255, 0.17);
+  --menu-bg: #3a1450;
+  --menu-line: #5d2b73;
+  --menu-hover: #4a1b63;
+  --hover: rgba(255, 255, 255, 0.1);
+  --play-bg: #fff3ea;
+  --play-fg: #3a1450;
+  --cover-bg: #5a2a6e;
+  --shadow: rgba(20, 0, 40, 0.5);
+  color-scheme: dark;
+}
+:root[data-theme="sunset"] body { background: linear-gradient(180deg, #1d0b3a 0%, #4a1654 38%, #b3345a 72%, #ff7a45 100%) fixed; }
+:root[data-theme="sunset"] .topbar,
+:root[data-theme="sunset"] .sidebar,
+:root[data-theme="sunset"] .row,
+:root[data-theme="sunset"] .player { backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+@media (min-width: 1280px) { :root[data-theme="sunset"] .np { background: rgba(32, 10, 56, 0.45); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); } }
+:root[data-theme="sunset"] body::before {
+  content: "";
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  width: min(52vw, 560px);
+  height: min(64vh, 560px);
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.55;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Cg fill='none' stroke='%23140524' stroke-linecap='round' stroke-width='4'%3E%3Cpath d='M150 200C154 160 156 130 158 96' stroke-width='6'/%3E%3Cpath d='M158 96C130 52 94 56 70 80'/%3E%3Cpath d='M158 96C122 86 90 104 78 138'/%3E%3Cpath d='M158 96C154 62 170 38 196 28'/%3E%3Cpath d='M158 96C190 62 214 66 226 90'/%3E%3Cpath d='M158 96C192 98 214 118 220 150'/%3E%3Cpath d='M70 200C74 178 76 164 78 146' stroke-width='4'/%3E%3Cpath d='M78 146C60 118 36 122 20 138'/%3E%3Cpath d='M78 146C56 142 38 156 34 176'/%3E%3Cpath d='M78 146C76 126 86 112 102 106'/%3E%3Cpath d='M78 146C98 124 116 126 126 142'/%3E%3C/g%3E%3C/svg%3E") bottom right / contain no-repeat;
+}
+
+/* ============================================================
+   Тема «Кассета»: дека с вставленной кассетой МК-60 и вкладыш
+   ============================================================ */
+.cx { display: none; }
+.jcard { display: contents; }
+.jc-head { display: none; }
+.tt-b { display: none; }
+
+:root[data-theme="cassette"] .np .vinyl,
+:root[data-theme="cassette"] .np .np-title,
+:root[data-theme="cassette"] .np .np-sub,
+:root[data-theme="cassette"] .np .np-viz,
+:root[data-theme="cassette"] .np .np-wave,
+:root[data-theme="cassette"] .np .np-time,
+:root[data-theme="cassette"] .np .np-controls,
+:root[data-theme="cassette"] .np .np-actions { display: none !important; }
+:root[data-theme="cassette"] .np-inner { gap: 14px; max-width: 360px; padding-left: 14px; padding-right: 14px; }
+:root[data-theme="cassette"] .cx { display: block; width: 100%; }
+:root[data-theme="cassette"] .tt-a { display: none; }
+:root[data-theme="cassette"] .tt-b { display: inline; }
+
+/* дека */
+.cx-deck {
+  padding: 12px 12px 14px;
+  border-radius: 10px;
+  background:
+    repeating-linear-gradient(93deg, rgba(0, 0, 0, 0.1) 0 2px, rgba(0, 0, 0, 0) 2px 9px),
+    repeating-linear-gradient(86deg, rgba(255, 220, 170, 0.07) 0 3px, rgba(255, 220, 170, 0) 3px 13px),
+    linear-gradient(#7c553a, #553623);
+  box-shadow: inset 0 1px 0 #a67b58, inset 0 0 0 1px #2c1b10, 0 10px 22px rgba(70, 45, 20, 0.4);
+  user-select: none;
+}
+.cx-leg { display: block; font: 700 8.5px/1.15 Arial, "Helvetica Neue", sans-serif; letter-spacing: 0.1em; text-transform: uppercase; text-align: center; color: #ecdcb8; }
+.cx-top { display: flex; align-items: flex-end; justify-content: space-between; margin: 0 4px 10px; }
+.cx-brand { text-align: center; }
+.cx-name { display: block; font: 21px/1 "Permanent Marker", "Segoe Print", cursive; color: #f2e4c4; text-shadow: 0 1px 0 #2c1b10; }
+.cx-brand .cx-leg { margin-top: 3px; }
+.cx-sw { text-align: center; }
+.cx-sw .cx-leg { margin-bottom: 4px; }
+.cx-slide { position: relative; display: block; width: 40px; height: 16px; margin: 0 auto; padding: 0; border-radius: 3px; background: #1a110b; box-shadow: inset 0 1px 3px #000, 0 1px 0 #a67b58; cursor: pointer; }
+.cx-slide b { position: absolute; left: 2px; top: 2px; width: 18px; height: 12px; border-radius: 2px; background: linear-gradient(90deg, #cfc4a8, #f6efdc 45%, #b9ad90); box-shadow: 0 1px 2px rgba(0, 0, 0, 0.6); transition: left 0.12s; }
+.cx-slide.on b { left: 20px; }
+.cx-slide.on { box-shadow: inset 0 1px 3px #000, 0 1px 0 #a67b58, inset 0 0 0 1px #e5301d; }
+
+.cx-bezel { padding: 8px; border-radius: 8px; background: linear-gradient(#f0e8d3, #d9cfb4); box-shadow: inset 0 1px 0 #fff, 0 0 0 1px #2c1b10, 0 2px 6px rgba(0, 0, 0, 0.45); }
+.cx-window { position: relative; overflow: hidden; padding: 5px; border-radius: 4px; background: #1c130e; box-shadow: inset 0 0 0 1px #000, inset 0 3px 8px rgba(0, 0, 0, 0.9); }
+.cx-tape svg { display: block; width: 100%; height: auto; }
+.cx-tape .hub { transform-box: fill-box; transform-origin: center; animation: spin 2.4s linear infinite; animation-play-state: paused; }
+.np.is-playing .cx-tape .hub { animation-play-state: running; }
+.cx-glass { position: absolute; inset: 0; pointer-events: none; background: linear-gradient(115deg, rgba(255, 255, 255, 0.13) 0, rgba(255, 255, 255, 0.03) 38%, rgba(255, 255, 255, 0) 39%), linear-gradient(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0) 18%, rgba(0, 0, 0, 0) 85%, rgba(0, 0, 0, 0.3)); box-shadow: inset 0 0 14px rgba(0, 0, 0, 0.7); }
+
+.cx-strip { display: flex; align-items: flex-end; gap: 10px; margin: 14px 2px 12px; }
+.cx-counter { flex: none; }
+.cx-counter .cx-leg { margin-bottom: 4px; }
+.cx-digits { display: flex; gap: 2px; padding: 3px 4px; border-radius: 4px; background: #17110d; box-shadow: inset 0 0 0 1px #000, 0 1px 0 #a67b58; }
+.cx-digits span { width: 13px; height: 22px; display: grid; place-items: center; font: 700 16px/1 "Courier New", monospace; color: #f4efe0; background: linear-gradient(#2c2a27 0, #111 48%, #000 50%, #1c1b19 52%, #353230 100%); border-radius: 2px; }
+.cx-digits .sep { width: 4px; background: none; color: #c9b08e; }
+.cx-sl { flex: 1; min-width: 0; padding-bottom: 7px; }
+.cx-sl .cx-leg { margin-bottom: 9px; }
+.cx-groove { position: relative; height: 7px; border-radius: 4px; background: #1a110b; box-shadow: inset 0 1px 2px #000, 0 1px 0 #a67b58; cursor: pointer; touch-action: none; }
+.cx-groove i { position: absolute; left: 0; top: 0; bottom: 0; width: 0; border-radius: 4px; background: linear-gradient(#f08a3c, #c0471f); pointer-events: none; }
+.cx-groove b { position: absolute; left: 0; top: -7px; width: 16px; height: 21px; border-radius: 3px; pointer-events: none; background: linear-gradient(90deg, #bfb398, #f8f2e0 40%, #ada187); box-shadow: 0 1px 3px rgba(0, 0, 0, 0.6), inset 0 0 0 1px rgba(0, 0, 0, 0.3); }
+.cx-groove b::after { content: ""; position: absolute; left: 50%; top: 3px; bottom: 3px; width: 2px; margin-left: -1px; background: #5a4b39; }
+
+/* клавиши, утопленные в тёмные пазы */
+.cx-keys, .cx-small { display: flex; gap: 6px; }
+.cx-small { justify-content: center; margin-top: 12px; }
+.cx-small .cx-kcol { flex: none; width: 74px; }
+.cx-kcol { flex: 1; min-width: 0; }
+.cx-kcol .cx-leg { margin-bottom: 4px; min-height: 20px; }
+.cx-small .cx-kcol .cx-leg { min-height: 0; }
+.cx-slot { position: relative; height: 62px; padding: 3px 3px 0; border-radius: 3px; background: linear-gradient(#0b0705, #261a12); box-shadow: inset 0 3px 6px #000, 0 1px 0 #a67b58; }
+.cx-slot.s { height: 40px; }
+.cx-key {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 44px;
+  padding: 0;
+  border-radius: 2px 2px 3px 3px;
+  background: linear-gradient(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0)) top / 100% 3px no-repeat, linear-gradient(#f7f1e0 0 58%, #cdbf9f 58% 62%, #e6dcc2 62% 100%);
+  box-shadow: 0 5px 0 #8f8268, 0 8px 8px rgba(0, 0, 0, 0.7), inset 0 1px 0 #fff;
+  transition: transform 0.07s, box-shadow 0.07s;
+}
+.cx-key::before { content: ""; position: absolute; left: 22%; right: 22%; top: 10px; height: 3px; border-radius: 2px; background: #b5a784; box-shadow: 0 1px 0 #fff; }
+.cx-key:active, .cx-key.on { transform: translateY(8px); box-shadow: 0 0 0 #8f8268, 0 1px 1px rgba(0, 0, 0, 0.5), inset 0 2px 3px rgba(0, 0, 0, 0.3); background: linear-gradient(#d9cfb3 0 58%, #c3b595 58% 62%, #d3c8aa 62% 100%); }
+.cx-key.sm { height: 26px; }
+.cx-slot.s .cx-key::before { top: 6px; }
+.cx-key.sm:active, .cx-key.sm.on { transform: translateY(5px); }
+.cx-key.fav.on { background: linear-gradient(#e8604a 0 58%, #b8301d 58% 62%, #d54a35 62% 100%); }
+
+/* вкладыш: метки времени и описание */
+:root[data-theme="cassette"] .jcard {
+  display: block;
+  position: relative;
+  padding: 18px 16px 16px;
+  background: #f3e9ca;
+  border-radius: 2px;
+  box-shadow: 0 8px 20px rgba(70, 45, 20, 0.3), inset 0 0 0 1px rgba(120, 90, 40, 0.18);
+  font-family: "Courier New", Courier, monospace;
+  color: #3a2a1f;
+  --ink: #3a2a1f;
+  --ink-2: #6b5440;
+}
+:root[data-theme="cassette"] .jcard::before,
+:root[data-theme="cassette"] .jcard::after { content: ""; position: absolute; top: -9px; width: 62px; height: 18px; background: rgba(245, 225, 140, 0.75); box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15); }
+:root[data-theme="cassette"] .jcard::before { left: 14px; transform: rotate(-4deg); }
+:root[data-theme="cassette"] .jcard::after { right: 14px; transform: rotate(3deg); }
+:root[data-theme="cassette"] .jc-head { display: block; }
+:root[data-theme="cassette"] .jc-head::before { content: ""; display: block; height: 8px; margin: -22px -16px 12px; background: linear-gradient(#d9482b 0 60%, #e6a93a 60% 100%); }
+.jc-title { margin: 0; font: 22px/1.15 "Permanent Marker", "Segoe Print", cursive; color: #1d2f6b; overflow-wrap: anywhere; }
+.jc-sub { margin: 4px 0 12px; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-2); }
+:root[data-theme="cassette"] .np-info { display: flex; flex-direction: column; gap: 14px; margin-top: 0; }
+:root[data-theme="cassette"] .np-win + .np-win { margin-top: 0; }
+:root[data-theme="cassette"] .np-win.w-marks { order: -1; }
+:root[data-theme="cassette"] .np-win-tb {
+  display: block;
+  margin: 0 0 6px;
+  padding: 0 0 3px;
+  border-bottom: 2px solid var(--ink);
+  color: var(--ink);
+  font: 700 11px/1 "Courier New", monospace;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+:root[data-theme="cassette"] .marks { display: block; counter-reset: mk; }
+:root[data-theme="cassette"] .mark {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  width: 100%;
+  min-height: 0;
+  height: auto;
+  margin: 0;
+  padding: 3px 4px;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  color: inherit;
+  font: 13px/1.4 "Courier New", Courier, monospace;
+  text-align: left;
+}
+:root[data-theme="cassette"] .mark::before { order: 1; flex: none; width: 1.6em; text-align: right; counter-increment: mk; content: counter(mk) "."; color: var(--ink-2); }
+:root[data-theme="cassette"] .mark .mark-name { order: 2; flex: 0 1 auto; min-width: 0; max-width: 70%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: inherit; font-size: inherit; }
+:root[data-theme="cassette"] .mark::after { content: ""; order: 3; flex: 1; min-width: 8px; border-bottom: 1px dotted var(--ink-2); transform: translateY(-3px); }
+:root[data-theme="cassette"] .mark .mark-t { order: 4; flex: none; min-width: 0; width: auto; color: var(--ink-2); font-size: inherit; background: none; font-variant-numeric: tabular-nums; }
+:root[data-theme="cassette"] .mark:hover .mark-name { text-decoration: underline; }
+:root[data-theme="cassette"] .mark.active { background: linear-gradient(transparent 12%, #ffe46b 12%, #ffe46b 90%, transparent 90%); border-radius: 3px; color: #000; transform: rotate(-0.4deg); }
+:root[data-theme="cassette"] .mark.active .mark-t, :root[data-theme="cassette"] .mark.active::before { color: #000; }
+:root[data-theme="cassette"] .mark-note { padding: 3px 4px 3px 2.4em; color: var(--ink-2); font-size: 13px; font-style: italic; }
+:root[data-theme="cassette"] .np-win .np-desc { margin: 0; color: var(--ink); font-size: 12px; line-height: 20px; white-space: pre-line; background-image: repeating-linear-gradient(transparent 0 19px, rgba(60, 45, 20, 0.16) 19px 20px); background-position: 0 -1px; }
+
+/* ============================================================
+   Тема VHS: вся правая панель в стиле старого плеера
+   (главное окно, окно меток времени, окно описания)
+   ============================================================ */
+.wmx { display: none; }
+.np-win + .np-win { margin-top: 14px; }
+.np-win-tb .grip, .np-win-tb .wbtns, .np-win-foot { display: none; }
+
+:root[data-theme="vhs"] {
+  --lcd: #37ff5a;
+  --lcd-dim: #1a8a30;
+  --glow: 0 0 6px rgba(55, 255, 90, 0.55);
+  --metal-1: #4b5060;
+  --metal-2: #22242c;
+  --hi: #8b91a3;
+  --lo: #12131a;
+}
+:root[data-theme="vhs"] .np .vinyl,
+:root[data-theme="vhs"] .np .np-title,
+:root[data-theme="vhs"] .np .np-sub,
+:root[data-theme="vhs"] .np .np-viz,
+:root[data-theme="vhs"] .np .np-wave,
+:root[data-theme="vhs"] .np .np-time,
+:root[data-theme="vhs"] .np .np-controls,
+:root[data-theme="vhs"] .np .np-actions { display: none !important; }
+:root[data-theme="vhs"] .np-inner { gap: 8px; max-width: 360px; }
+:root[data-theme="vhs"] .wmx { display: block; width: 100%; }
+:root[data-theme="vhs"] .np-info { display: flex; flex-direction: column; gap: 8px; margin-top: 0; }
+:root[data-theme="vhs"] .np-win.w-marks { order: -1; }
+:root[data-theme="vhs"] .np-win + .np-win { margin-top: 0; }
+
+/* рамка окна */
+:root[data-theme="vhs"] .wm-win,
+:root[data-theme="vhs"] .np-win {
+  padding: 3px;
+  border-radius: 3px;
+  background: linear-gradient(var(--metal-1), var(--metal-2));
+  box-shadow: inset 0 0 0 1px var(--hi), 0 0 0 1px #0a0a10, 0 10px 24px rgba(0, 0, 0, 0.6);
+  font-family: Consolas, "Lucida Console", "Courier New", monospace;
+}
+/* заголовок окна */
+:root[data-theme="vhs"] .wm-tb,
+:root[data-theme="vhs"] .np-win-tb {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 16px;
+  margin: 0;
+  padding: 0 4px;
+  background: linear-gradient(#4263b0, #1a2860);
+  color: #dbe4ff;
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+:root[data-theme="vhs"] .np-win-tb .grip, .wm-tb .grip { display: block; flex: 1; height: 7px; background: repeating-linear-gradient(#dbe4ff 0 1px, transparent 1px 3px); opacity: 0.55; }
+:root[data-theme="vhs"] .np-win-tb .wbtns, .wm-tb .wbtns { display: flex; gap: 2px; }
+.wbtns i {
+  width: 10px;
+  height: 10px;
+  display: grid;
+  place-items: center;
+  font-style: normal;
+  font-size: 9px;
+  line-height: 1;
+  color: #dbe4ff;
+  background: linear-gradient(#5a6fae, #26346e);
+  box-shadow: inset 1px 1px #8da0e0, inset -1px -1px #101a44;
+}
+
+/* главное окно */
+.wm-body { display: flex; gap: 6px; margin-top: 3px; padding: 6px 5px 5px; background: #0a0c10; }
+.wm-lcd { flex: none; width: 46%; padding: 4px 6px 5px; background: #05080a; border: 1px solid #1a2630; }
+.wm-st { display: flex; align-items: center; gap: 7px; }
+.wm-ico { width: 12px; height: 14px; color: var(--lcd); filter: drop-shadow(var(--glow)); }
+.wm-time { margin-left: auto; font-weight: 700; font-size: 29px; line-height: 1; letter-spacing: 0.02em; color: var(--lcd); text-shadow: var(--glow); font-family: Consolas, "Lucida Console", monospace; }
+.wm-spec { display: flex; align-items: flex-end; gap: 1px; height: 30px; margin-top: 6px; }
+.wm-spec i {
+  flex: 1;
+  height: 100%;
+  background: linear-gradient(to top, #22d13c 0 55%, #d8e41f 55% 80%, #e8381c 80%);
+  transform: scaleY(0.12);
+  transform-origin: bottom;
+  animation: wm-eq 0.9s ease-in-out infinite alternate;
+  animation-play-state: paused;
+}
+.wm-spec i:nth-child(4n + 2) { animation-duration: 0.62s; animation-delay: -0.2s; }
+.wm-spec i:nth-child(4n + 3) { animation-duration: 1.15s; animation-delay: -0.5s; }
+.wm-spec i:nth-child(4n) { animation-duration: 0.74s; animation-delay: -0.35s; }
+.wm-spec i:nth-child(5n) { animation-duration: 1.3s; animation-delay: -0.8s; }
+.np.is-playing .wm-spec i { animation-play-state: running; }
+@keyframes wm-eq { to { transform: scaleY(1); } }
+.wm-side { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: space-between; gap: 6px; }
+.wm-marq { overflow: hidden; white-space: nowrap; padding: 2px 4px; background: #05080a; border: 1px solid #1a2630; color: var(--lcd); font-size: 12px; text-shadow: var(--glow); }
+.wm-marq span { display: inline-block; }
+.np.is-playing .wm-marq span { padding-left: 100%; animation: wm-marq 15s linear infinite; }
+@keyframes wm-marq { to { transform: translateX(-100%); } }
+.wm-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 7px; font-size: 10px; letter-spacing: 0.04em; color: #9aa6b8; }
+.wm-meta b { color: var(--lcd); font-weight: 400; }
+.wm-meta .led { padding: 0 3px; color: #1b4a27; background: #05080a; border: 1px solid #1a2630; font-size: 9px; }
+.wm-meta .led.on { color: var(--lcd); text-shadow: var(--glow); }
+.wm-sliders { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.wm-sl { position: relative; height: 10px; background: #05080a; border: 1px solid #1a2630; cursor: pointer; touch-action: none; }
+.wm-sl i { position: absolute; left: 0; top: 0; bottom: 0; background: linear-gradient(#5dff7b, #16a832); pointer-events: none; }
+.wm-sl b { position: absolute; top: -2px; width: 8px; height: 12px; background: linear-gradient(var(--metal-1), var(--metal-2)); box-shadow: inset 1px 1px var(--hi), inset -1px -1px var(--lo); pointer-events: none; }
+.wm-seek { position: relative; height: 11px; margin: 4px 0 0; background: #05080a; border: 1px solid #1a2630; cursor: pointer; touch-action: none; }
+.wm-seek i { position: absolute; left: 0; top: 0; bottom: 0; width: 0; background: linear-gradient(#5dff7b, #16a832); pointer-events: none; }
+.wm-seek b { position: absolute; top: -2px; left: 0; width: 18px; height: 13px; background: linear-gradient(var(--metal-1), var(--metal-2)); box-shadow: inset 1px 1px var(--hi), inset -1px -1px var(--lo); pointer-events: none; }
+.wm-btns { display: flex; align-items: center; gap: 3px; margin-top: 6px; }
+.wm-btns + .wm-btns { margin-top: 4px; }
+.wm-btns .gap { flex: 1; }
+.wm-btn {
+  width: 34px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  color: #cfd6ea;
+  background: linear-gradient(var(--metal-1), var(--metal-2));
+  box-shadow: inset 1px 1px var(--hi), inset -1px -1px var(--lo), 0 0 0 1px #0a0a10;
+  border-radius: 0;
+}
+.wm-btn:active, .wm-btn.on { box-shadow: inset 1px 1px var(--lo), inset -1px -1px var(--hi), 0 0 0 1px #0a0a10; color: var(--lcd); }
+.wm-btn svg { width: 14px; height: 14px; fill: currentColor; }
+.wm-btn.sm { width: auto; height: 20px; padding: 0 7px; font: 700 9px/1 Consolas, monospace; letter-spacing: 0.06em; }
+
+/* окна меток и описания */
+:root[data-theme="vhs"] .np-win-body { margin-top: 3px; padding: 2px; background: #000; border: 1px solid #1a2630; }
+:root[data-theme="vhs"] .np-win .np-desc { padding: 4px 6px; max-height: 170px; overflow-y: auto; color: #8fe8ff; font-size: 12px; line-height: 1.5; white-space: pre-line; scrollbar-width: none; }
+:root[data-theme="vhs"] .np-win .np-desc::-webkit-scrollbar { display: none; }
+:root[data-theme="vhs"] .marks { display: block; max-height: 148px; overflow-y: auto; counter-reset: mk; scrollbar-width: none; }
+:root[data-theme="vhs"] .marks::-webkit-scrollbar { display: none; }
+:root[data-theme="vhs"] .mark {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  width: 100%;
+  min-height: 0;
+  height: auto;
+  margin: 0;
+  padding: 1px 4px;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  color: var(--lcd);
+  font-size: 12px;
+  text-align: left;
+  white-space: nowrap;
+}
+:root[data-theme="vhs"] .mark::before { order: 1; flex: none; width: 1.7em; text-align: right; counter-increment: mk; content: counter(mk) "."; color: var(--lcd-dim); }
+:root[data-theme="vhs"] .mark .mark-name { order: 2; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; color: inherit; font-size: inherit; }
+:root[data-theme="vhs"] .mark .mark-t { order: 3; flex: none; min-width: 0; width: auto; color: inherit; font-size: inherit; background: none; }
+:root[data-theme="vhs"] .mark:hover { background: #0d1a10; }
+:root[data-theme="vhs"] .mark.active { background: #0b0bbf; color: #fff; }
+:root[data-theme="vhs"] .mark.active::before { color: #c9ccff; }
+:root[data-theme="vhs"] .mark-note { padding: 1px 4px 1px 36px; color: #7d8a97; font-size: 12px; }
+:root[data-theme="vhs"] .np-win-foot { display: block; margin-top: 3px; padding: 0 3px; font-size: 10px; letter-spacing: 0.05em; color: #9aa6b8; }
+
+@media (prefers-reduced-motion: reduce) { .wm-spec i, .wm-marq span { animation: none !important; } }
+
+/* ============================================================
+   Тема Lo-Fi: вид из окна, неоновая вывеска на длинных кронштейнах
+   ============================================================ */
+.lf { display: none; }
+:root[data-theme="lofi"] .np .vinyl,
+:root[data-theme="lofi"] .np .np-title,
+:root[data-theme="lofi"] .np .np-sub,
+:root[data-theme="lofi"] .np .np-viz,
+:root[data-theme="lofi"] .np .np-wave,
+:root[data-theme="lofi"] .np .np-time,
+:root[data-theme="lofi"] .np .np-controls,
+:root[data-theme="lofi"] .np .np-actions { display: none !important; }
+:root[data-theme="lofi"] .np-inner { gap: 0; max-width: 360px; padding-left: 14px; padding-right: 14px; }
+:root[data-theme="lofi"] .lf { display: block; width: 100%; }
+.lf-scene { overflow: hidden; border-radius: 14px 14px 0 0; background: #06020d; box-shadow: 0 12px 28px rgba(0, 0, 0, 0.55); }
+.lf-scene svg { display: block; width: 100%; height: auto; }
+.lf .nsign text { font-family: "Arial Black", "Segoe UI Black", Arial, sans-serif; font-weight: 900; }
+.lf .off1 { animation: lf-off1 7s steps(1) infinite; }
+.lf .off2 { animation: lf-off2 9s steps(1) infinite 2.5s; }
+@keyframes lf-off1 { 0%, 70%, 80%, 100% { opacity: 1; } 71%, 73%, 75% { opacity: 0.14; } 72%, 74% { opacity: 0.9; } 76%, 79% { opacity: 0.14; } }
+@keyframes lf-off2 { 0%, 55%, 100% { opacity: 1; } 56%, 66% { opacity: 0.14; } 60% { opacity: 0.9; } 62% { opacity: 0.14; } }
+.lf .tw { animation: lf-tw 3.4s ease-in-out infinite; }
+.lf .tw:nth-child(2n) { animation-delay: -1.1s; } .lf .tw:nth-child(3n) { animation-delay: -2.2s; }
+@keyframes lf-tw { 50% { opacity: 0.25; } }
+.lf .steam { animation: lf-steam 4.5s ease-in-out infinite; opacity: 0; }
+.lf .steam:nth-child(2) { animation-delay: -1.6s; } .lf .steam:nth-child(3) { animation-delay: -3s; }
+@keyframes lf-steam { 0% { opacity: 0; transform: translate(0, 8px); } 35% { opacity: 0.55; } 100% { opacity: 0; transform: translate(5px, -18px); } }
+.lf .halo { animation: lf-halo 5s ease-in-out infinite; }
+@keyframes lf-halo { 50% { opacity: 0.75; } }
+
+.lf-ctl { display: flex; align-items: center; gap: 10px; padding: 12px 14px 14px; background: #150a20; border-radius: 0 0 14px 14px; box-shadow: 0 12px 28px rgba(0, 0, 0, 0.45); }
+.lf-btn { flex: none; width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; color: #ff9ff2; border: 1.5px solid rgba(255, 95, 232, 0.65); box-shadow: 0 0 10px rgba(255, 63, 224, 0.4), inset 0 0 8px rgba(255, 63, 224, 0.18); }
+.lf-btn svg { width: 16px; height: 16px; fill: currentColor; }
+.lf-btn.main { width: 44px; height: 44px; color: #fff0ff; background: rgba(255, 63, 224, 0.25); border-color: #ff5fe8; box-shadow: 0 0 16px rgba(255, 63, 224, 0.7), inset 0 0 10px rgba(255, 63, 224, 0.4); }
+.lf-btn.main svg { width: 20px; height: 20px; }
+.lf-prog { flex: 1; min-width: 0; }
+.lf-prog .l { display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 11px; color: #b79ac9; }
+.lf-prog .l b { color: #ff9ff2; font-weight: 600; font-family: ui-monospace, Consolas, monospace; }
+.lf-track { position: relative; height: 4px; border-radius: 2px; background: rgba(255, 95, 232, 0.2); cursor: pointer; touch-action: none; }
+.lf-track::before { content: ""; position: absolute; left: 0; right: 0; top: -10px; bottom: -10px; }
+.lf-track i { position: absolute; left: 0; top: 0; bottom: 0; width: calc(var(--p, 0) * 100%); border-radius: 2px; background: #ff5fe8; box-shadow: 0 0 8px #ff3fe0; pointer-events: none; }
+.lf-track b { position: absolute; top: -5px; left: calc(var(--p, 0) * (100% - 14px)); width: 14px; height: 14px; border-radius: 50%; background: #fff0ff; box-shadow: 0 0 10px #ff3fe0; pointer-events: none; }
+.lf-acts { display: flex; gap: 8px; margin: 12px 0 0; }
+.lf-act { flex: 1; height: 34px; border-radius: 17px; display: flex; align-items: center; justify-content: center; gap: 5px; font-size: 10.5px; letter-spacing: 0.08em; color: #d9b8ee; border: 1px solid rgba(167, 112, 255, 0.45); white-space: nowrap; }
+.lf-act svg { width: 15px; height: 15px; fill: currentColor; }
+.lf-act.on { color: #ff9ff2; border-color: rgba(255, 95, 232, 0.8); box-shadow: 0 0 10px rgba(255, 63, 224, 0.4); }
+
+/* метки и описание в том же неоновом стиле */
+:root[data-theme="lofi"] .np-info { display: flex; flex-direction: column; gap: 14px; margin-top: 14px; }
+:root[data-theme="lofi"] .np-win + .np-win { margin-top: 0; }
+:root[data-theme="lofi"] .np-win.w-marks { order: -1; }
+:root[data-theme="lofi"] .np-win { padding: 14px 16px; border-radius: 12px; background: rgba(40, 20, 60, 0.85); border: 1px solid rgba(167, 112, 255, 0.4); box-shadow: 0 0 18px rgba(167, 112, 255, 0.12), inset 0 0 20px rgba(167, 112, 255, 0.05); }
+:root[data-theme="lofi"] .np-win.w-desc { border-color: rgba(255, 95, 232, 0.45); box-shadow: 0 0 18px rgba(255, 63, 224, 0.15), inset 0 0 20px rgba(255, 63, 224, 0.05); }
+:root[data-theme="lofi"] .np-win-tb { display: block; margin: 0 0 8px; padding: 0; font: 600 11px/1 system-ui, sans-serif; letter-spacing: 0.3em; text-transform: uppercase; color: #b894ff; text-shadow: 0 0 8px rgba(167, 112, 255, 0.8); }
+:root[data-theme="lofi"] .w-desc .np-win-tb { color: #ff8cee; text-shadow: 0 0 8px rgba(255, 63, 224, 0.8); }
+:root[data-theme="lofi"] .marks { display: block; max-height: 250px; overflow-y: auto; scrollbar-width: none; }
+:root[data-theme="lofi"] .marks::-webkit-scrollbar { display: none; }
+:root[data-theme="lofi"] .mark { display: flex; align-items: baseline; gap: 12px; width: 100%; min-height: 0; height: auto; margin: 0; padding: 7px 8px 7px 10px; border: 0; border-left: 3px solid transparent; border-radius: 0 6px 6px 0; background: none; color: #dccdea; font-size: 14px; text-align: left; }
+:root[data-theme="lofi"] .mark .mark-t { flex: none; width: 2.9em; min-width: 0; color: #b894ff; font: 600 13px ui-monospace, Consolas, monospace; background: none; }
+:root[data-theme="lofi"] .mark .mark-name { flex: 1; min-width: 0; color: inherit; font-size: inherit; }
+:root[data-theme="lofi"] .mark:hover { background: rgba(167, 112, 255, 0.1); }
+:root[data-theme="lofi"] .mark.active { border-left-color: #ff5fe8; background: linear-gradient(90deg, rgba(255, 63, 224, 0.24), transparent); color: #fff; text-shadow: 0 0 8px rgba(255, 150, 240, 0.85); }
+:root[data-theme="lofi"] .mark.active .mark-t { color: #ff9ff2; }
+:root[data-theme="lofi"] .mark-note { padding: 7px 8px 7px 10px; color: #a38bb4; font-size: 13px; font-style: italic; }
+:root[data-theme="lofi"] .np-win .np-desc { margin: 0; color: #dccdea; font-size: 13px; line-height: 1.6; }
+
+@media (prefers-reduced-motion: reduce) {
+  .cx-tape .hub, .wm-spec i, .wm-marq span, .lf .off1, .lf .off2, .lf .tw, .lf .halo { animation: none !important; }
+  .lf .steam { animation: none !important; opacity: 0.4; }
+}
+.seg button:disabled { opacity: 0.45; cursor: default; }
+
+/* ============================================================
+   Тема «Рим»: травертин, багрянец, золото; картина Рима фоном
+   ============================================================ */
+@font-face { font-family: "Forum"; src: url("fonts/forum-cyrillic.woff2") format("woff2"); unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116; font-display: swap; }
+@font-face { font-family: "Forum"; src: url("fonts/forum-latin.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; font-display: swap; }
+@font-face { font-family: "Cinzel"; font-weight: 600; src: url("fonts/cinzel-600-latin.woff2") format("woff2"); font-display: swap; }
+@font-face { font-family: "Cormorant Garamond"; font-style: italic; font-weight: 500; src: url("fonts/cormorant-i500-cyrillic.woff2") format("woff2"); unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116; font-display: swap; }
+@font-face { font-family: "Cormorant Garamond"; font-style: italic; font-weight: 500; src: url("fonts/cormorant-i500-latin.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122; font-display: swap; }
+
+:root[data-theme="rome"] {
+  --bg: #e9dcbd;
+  --panel: #f5ecd5;
+  --panel-2: #e8d9b4;
+  --line: #cdb88a;
+  --bar: #f5ecd5;
+  --text: #3a2418;
+  --text-2: #54382a;
+  --muted: #8a6b4e;
+  --icon: #6b4a35;
+  --icon-strong: #2a1810;
+  --accent: #a3263a;
+  --wave: #d6c391;
+  --track: #d9c9a0;
+  --field: #efe2c4;
+  --field-focus: #e8d9b4;
+  --menu-bg: #f6ecd4;
+  --menu-line: #cdb88a;
+  --menu-hover: #efe2c4;
+  --hover: rgba(163, 38, 58, 0.08);
+  --play-bg: #a3263a;
+  --play-fg: #fff4d6;
+  --cover-bg: #d6c39a;
+  --shadow: rgba(70, 40, 20, 0.25);
+  --panel-bg: rgba(245, 236, 213, 0.84);
+  color-scheme: light;
+}
+:root[data-theme="rome"] body { font-family: "Forum", Georgia, "Times New Roman", serif; }
+:root[data-theme="rome"] .brand span { font: 600 1.2rem "Cinzel", "Forum", serif; letter-spacing: 0.06em; color: var(--accent); text-shadow: none; }
+:root[data-theme="rome"] .brand svg { color: var(--accent); }
+:root[data-theme="rome"] .top-wrap::after { content: ""; display: block; height: 12px; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='12'%3E%3Cpath d='M1 11V1H23V11H7V5H17V8' fill='none' stroke='%23a3263a' stroke-width='1.6'/%3E%3Cpath d='M0 11.5H24' stroke='%23c9a227' stroke-width='1.4'/%3E%3C/svg%3E") repeat-x; }
+:root[data-theme="rome"] .topbar { border-bottom: 0; }
+:root[data-theme="rome"] #search { border: 1px solid var(--line); border-radius: 3px; }
+:root[data-theme="rome"] .nav-item { border-radius: 3px; }
+:root[data-theme="rome"] .nav-item.active { background: #ecdcb2; color: var(--text); box-shadow: inset 3px 0 0 var(--accent); }
+:root[data-theme="rome"] .nav-item.active .count { color: var(--accent); }
+:root[data-theme="rome"] .row { border-radius: 4px; border: 1px solid var(--line); box-shadow: 0 1px 0 #fff8e6 inset; }
+:root[data-theme="rome"] .row.active { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent) inset; }
+:root[data-theme="rome"] .row-cover .cover, :root[data-theme="rome"] .cover-play { border-radius: 3px; }
+:root[data-theme="rome"] .row-cover .cover { box-shadow: 0 0 0 1px #c9a227; }
+:root[data-theme="rome"] .btn { border-radius: 3px; background: var(--accent); color: #fff4d6; letter-spacing: 0.06em; box-shadow: 0 0 0 1px #8f7010 inset; }
+:root[data-theme="rome"] .btn.ghost { background: var(--panel-2); color: var(--text); box-shadow: none; }
+:root[data-theme="rome"] .badge-new { background: var(--accent); color: #fff4d6; }
+:root[data-theme="rome"] .view-head h1, :root[data-theme="rome"] .group-title { font-weight: 400; letter-spacing: 0.03em; }
+
+/* картина Рима под боковой панелью и списком треков */
+.rome-bg { display: none; }
+:root[data-theme="rome"] .rome-bg {
+  display: block;
+  position: relative;
+  grid-column: 1 / 3;
+  grid-row: 2;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+  -webkit-mask-image: linear-gradient(#000 82%, transparent);
+  mask-image: linear-gradient(#000 82%, transparent);
+}
+:root[data-theme="rome"] .sidebar,
+:root[data-theme="rome"] .content { position: relative; z-index: 1; }
+/* картина Рима на всю область под боковой панелью и списком (дорисованная широкая версия), слабо видна */
+.rb-paint { position: absolute; inset: 0; background: url("img/rome-full.jpg") 30% center / cover no-repeat; opacity: 0.3; filter: saturate(0.85); }
+:root[data-theme="rome"] .sidebar { background: rgba(245, 236, 213, 0.7); border-right: 1px solid #b59a5e; box-shadow: 2px 0 10px rgba(70, 40, 20, 0.14); backdrop-filter: blur(1.5px); -webkit-backdrop-filter: blur(1.5px); }
+:root[data-theme="rome"] .player { border-top: 1px solid var(--line); }
+
+/* правая панель */
+.rm { display: none; }
+:root[data-theme="rome"] .np { background: #f1e4bd; }
+@media (min-width: 1280px) { :root[data-theme="rome"] .np { border-left: 1px solid #bfa66a; box-shadow: -3px 0 10px rgba(110, 80, 30, 0.1); } }
+:root[data-theme="rome"] .np .vinyl,
+:root[data-theme="rome"] .np .np-title,
+:root[data-theme="rome"] .np .np-sub,
+:root[data-theme="rome"] .np .np-viz,
+:root[data-theme="rome"] .np .np-wave,
+:root[data-theme="rome"] .np .np-time,
+:root[data-theme="rome"] .np .np-controls,
+:root[data-theme="rome"] .np .np-actions { display: none !important; }
+:root[data-theme="rome"] .np-inner { gap: 0; max-width: 360px; padding-left: 14px; padding-right: 14px; }
+:root[data-theme="rome"] .rm { display: block; width: 100%; }
+.rm-top { display: grid; grid-template-columns: 104px 1fr; gap: 16px; align-items: center; }
+.rm-cover { width: 104px; height: 104px; border-radius: 0; box-shadow: 0 0 0 4px #f6ecd0, 0 0 0 5px #c9a227, 0 6px 12px rgba(70, 40, 20, 0.3); }
+.rm-ey { font: 400 11px "Forum", serif; letter-spacing: 0.32em; text-transform: uppercase; color: #8a6b4e; }
+.rm-title { font: 600 21px/1.15 "Cinzel", "Forum", serif; color: #3a2418; letter-spacing: 0.03em; overflow-wrap: anywhere; }
+.rm-sub { font: 400 14px "Forum", serif; color: #7a5a3a; }
+.rm-time { margin-top: 8px; font: 600 22px "Cinzel", serif; color: #8f1f31; }
+.rm-time small { font: 400 14px "Forum", serif; color: #7a5a3a; }
+.rm-bar { position: relative; height: 6px; margin: 24px 2px 10px; border-radius: 3px; background: #d6c391; box-shadow: inset 0 1px 1px rgba(90, 60, 20, 0.35); cursor: pointer; touch-action: none; }
+.rm-bar::before { content: ""; position: absolute; left: 0; right: 0; top: -12px; bottom: -12px; }
+.rm-bar i { position: absolute; left: 0; top: 0; bottom: 0; width: calc(var(--p, 0) * 100%); border-radius: 3px; background: linear-gradient(#c3384e, #8f1f31); pointer-events: none; }
+.rm-bar b { position: absolute; top: -6px; left: calc(var(--p, 0) * (100% - 18px)); width: 18px; height: 18px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #f6dc8a, #b98a2a 70%, #8a6410); box-shadow: 0 0 0 1px #6e5010, 0 2px 4px rgba(70, 40, 20, 0.4); pointer-events: none; }
+.rm-bar u { position: absolute; top: -6px; width: 2px; height: 16px; margin-left: -1px; border-radius: 1px; background: #c9a227; box-shadow: 0 0 0 1px rgba(110, 80, 16, 0.55); cursor: pointer; }
+.rm-bar u::before { content: ""; position: absolute; left: -5px; right: -5px; top: -4px; bottom: -4px; }
+.rm-bar u.cur { top: -9px; height: 22px; width: 3px; margin-left: -1.5px; background: #a3263a; }
+.rm-brow { display: flex; align-items: center; justify-content: center; gap: 22px; padding: 6px 0 4px; }
+.rm-bronze, .rm-big { display: grid; place-items: center; border-radius: 50%; color: #3a2410; background: radial-gradient(circle at 35% 30%, #f3d98a, #b98a2a 70%, #8a6410); box-shadow: 0 0 0 1px #6e5010, 0 3px 6px rgba(70, 40, 20, 0.4), inset 0 1px 0 #fff3c0; }
+.rm-bronze { width: 38px; height: 38px; } .rm-big { width: 54px; height: 54px; }
+.rm-bronze svg { width: 16px; height: 16px; fill: currentColor; } .rm-big svg { width: 24px; height: 24px; fill: currentColor; }
+.rm-bronze:active, .rm-big:active { transform: translateY(1px); }
+.rm-acts { display: flex; gap: 6px; margin-top: 12px; }
+.rm-act { flex: 1; height: 32px; border-radius: 3px; font: 400 12px "Forum", serif; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-2); background: linear-gradient(#f9f1dc, #e8d9b4); box-shadow: 0 0 0 1px #8f7010, 0 2px 0 #b9a063; }
+.rm-act.on { background: linear-gradient(#b8344a, #8f1f31); color: #fff1d0; }
+
+/* метки на мраморной табличке, описание на свитке */
+:root[data-theme="rome"] .np-info { display: flex; flex-direction: column; gap: 0; margin-top: 16px; }
+:root[data-theme="rome"] .np-win + .np-win { margin-top: 0; }
+:root[data-theme="rome"] .np-win.w-marks { order: -1; padding: 14px 14px 10px; border-radius: 4px; background: radial-gradient(ellipse at 20% 0, #fbf6e8, transparent 60%), linear-gradient(#f3ead2, #e6d9b8); box-shadow: 0 0 0 1px #8f7010, 0 6px 14px rgba(70, 40, 20, 0.3), inset 0 0 18px rgba(150, 120, 60, 0.18); }
+:root[data-theme="rome"] .np-win-tb { display: block; margin: 0 0 8px; padding: 0; font: 400 13px "Forum", serif; letter-spacing: 0.3em; text-transform: uppercase; color: var(--accent); }
+:root[data-theme="rome"] .w-marks .np-win-tb::after { content: ""; display: block; height: 6px; margin-top: 6px; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='6'%3E%3Cpath d='M0 5V0H12V5H3V2H9' fill='none' stroke='%23c9a227' stroke-width='1'/%3E%3C/svg%3E") repeat-x; }
+:root[data-theme="rome"] .marks { display: block; counter-reset: mk; max-height: 250px; overflow-y: auto; scrollbar-width: none; }
+:root[data-theme="rome"] .marks::-webkit-scrollbar { display: none; }
+:root[data-theme="rome"] .mark { display: flex; align-items: baseline; gap: 10px; width: 100%; min-height: 0; height: auto; margin: 0; padding: 6px 8px; border: 0; border-bottom: 1px solid rgba(160, 130, 70, 0.28); border-radius: 0; background: none; color: var(--text); font: 400 16px/1.35 "Forum", serif; text-align: left; }
+:root[data-theme="rome"] .mark::before { order: 1; flex: none; width: 2.6em; counter-increment: mk; content: counter(mk, upper-roman); color: var(--accent); font-size: 14px; }
+:root[data-theme="rome"] .mark .mark-name { order: 2; flex: 1; min-width: 0; color: inherit; font-size: inherit; }
+:root[data-theme="rome"] .mark .mark-t { order: 3; flex: none; width: auto; min-width: 0; color: var(--muted); font: 400 14px "Forum", serif; background: none; }
+:root[data-theme="rome"] .mark:hover { background: rgba(163, 38, 58, 0.07); }
+:root[data-theme="rome"] .mark.active { background: linear-gradient(#b8344a, #8f1f31); color: #fff1d0; box-shadow: inset 3px 0 0 #c9a227; border-radius: 2px; }
+:root[data-theme="rome"] .mark.active::before, :root[data-theme="rome"] .mark.active .mark-t { color: #f6d77a; }
+:root[data-theme="rome"] .mark-note { padding: 6px 8px 6px 3.4em; color: var(--muted); font: italic 500 15px "Cormorant Garamond", Georgia, serif; }
+:root[data-theme="rome"] .np-win.w-desc { position: relative; margin: 26px 8px 10px; padding: 22px 18px 20px; background: linear-gradient(90deg, rgba(150, 110, 40, 0.18), transparent 8%, transparent 92%, rgba(150, 110, 40, 0.18)), linear-gradient(#f0e0b3, #e6d29b); box-shadow: 0 6px 12px rgba(70, 40, 20, 0.25); }
+:root[data-theme="rome"] .np-win.w-desc::before, :root[data-theme="rome"] .np-win.w-desc::after { content: ""; position: absolute; left: -8px; right: -8px; height: 16px; border-radius: 8px; background: linear-gradient(#e2c98a, #b98f3e 55%, #8a6420); box-shadow: 0 3px 5px rgba(70, 40, 20, 0.35); }
+:root[data-theme="rome"] .np-win.w-desc::before { top: -10px; } :root[data-theme="rome"] .np-win.w-desc::after { bottom: -10px; }
+:root[data-theme="rome"] .np-win .np-desc { margin: 0; font: italic 500 16px/1.5 "Cormorant Garamond", Georgia, serif; color: #3a2418; white-space: pre-line; }
+
+@media (max-width: 760px) {
+  :root[data-theme="rome"] .rome-bg { grid-column: 1; grid-row: 2 / 4; }
+}

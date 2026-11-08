@@ -3,6 +3,7 @@
   const CFG = window.CONFIG || {};
   const BASE = (CFG.MUSIC_BASE_URL || "./").replace(/\/*$/, "/");
   // старое название из config.js, который уже лежит в репозитории, заменяем новым
+  const NEW_DAYS = Number(CFG.NEW_DAYS) || 14; // сколько дней трек считается новым
   const SITE = CFG.SITE_TITLE && !["Bro Music", "Villa Vibe"].includes(CFG.SITE_TITLE) ? CFG.SITE_TITLE : "Villa Vibe Mixtapes";
   // карточка для темы PromoDJ (можно переопределить в config.js: PROFILE: ["строка 1", "строка 2"])
   const PROFILE = CFG.PROFILE || [
@@ -143,8 +144,13 @@
   let pendingSeek = 0; // доля трека (0..1), на которую перемотать после загрузки
   let pendingTime = 0; // секунда, на которую перемотать после загрузки (ссылка с &t=)
   let dragging = false;
+  let wmDrag = false; // тянут полосу перемотки в плеере темы VHS
+  let cxDrag = false; // то же в деке темы «Кассета»
+  let lfDrag = false; // и в теме Lo-Fi
+  let rmDrag = false; // и в теме «Рим»
   let sleepTimer = null;
 
+  const isNew = (t) => !!t.added && Date.now() - t.added < NEW_DAYS * 864e5;
   const saveFavs = () => store.set("favs", [...state.favs]);
   const savePlaylists = () => store.set("playlists", state.playlists);
   const curTrack = () => (state.cur ? state.byId.get(state.cur) : null);
@@ -169,6 +175,7 @@
           duration: Number(t.duration) || 0,
           peaks: Array.isArray(t.peaks) && t.peaks.length ? t.peaks : fakePeaks(t.id),
           cover: t.cover || null,
+          added: t.added ? Date.parse(t.added) || 0 : 0,
           ext: (file.match(/\.[^.]+$/) || [""])[0],
         };
       });
@@ -216,6 +223,7 @@
       pendingSeek = 0;
       pendingTime = lk.t;
       audio.preload = lk.t ? "metadata" : "none";
+      setAudioCors();
       audio.src = urlOf(lk.id);
       if (lk.t) audio.load();
     } else if (lk.t) {
@@ -408,6 +416,8 @@
       navItem("Все треки", state.tracks.length, { type: "all" }),
       navItem("Избранное", validFavs, { type: "fav" })
     );
+    const newCount = state.tracks.filter(isNew).length;
+    if (newCount) nav.append(navItem("Новое", newCount, { type: "new" }));
 
     const folders = [...new Set(state.tracks.map((t) => t.folder).filter(Boolean))];
     if (folders.length) {
@@ -444,6 +454,7 @@
       const pl = state.playlists.find((p) => p.id === v.key);
       list = pl ? pl.tracks.map((id) => state.byId.get(id)).filter(Boolean) : [];
     } else if (v.type === "folder") list = state.tracks.filter((t) => t.folder === v.key);
+    else if (v.type === "new") list = state.tracks.filter(isNew);
     else list = state.tracks;
 
     const q = state.query.trim().toLowerCase();
@@ -454,6 +465,7 @@
   function viewTitle() {
     const v = state.view;
     if (v.type === "fav") return "Избранное";
+    if (v.type === "new") return "Новое";
     if (v.type === "folder") return folderTitle(v.key);
     if (v.type === "pl") {
       const pl = state.playlists.find((p) => p.id === v.key);
@@ -464,6 +476,7 @@
 
   function emptyText() {
     if (state.query.trim()) return "Ничего не найдено.";
+    if (state.view.type === "new") return "Новых сетов пока нет.";
     if (state.view.type === "fav") return "Нажмите ♥ у трека, чтобы добавить его в избранное.";
     if (state.view.type === "pl") return "Плейлист пуст. Добавляйте треки кнопкой «+» у трека.";
     return "В хранилище пока нет треков.";
@@ -559,7 +572,7 @@
       "article",
       { class: "row", "data-id": t.id },
       h("div", { class: "row-cover" }, coverEl(t), playBtn),
-      h("div", { class: "row-body" }, h("div", { class: "row-top" }, title, h("div", { class: "row-folder" }, folderTitle(t.folder))), wave),
+      h("div", { class: "row-body" }, h("div", { class: "row-top" }, title, isNew(t) ? h("span", { class: "badge-new" }, "Новое") : null, h("div", { class: "row-folder" }, folderTitle(t.folder))), wave),
       h("div", { class: "row-side" }, h("div", { class: "row-actions" }, favBtn, addBtn), h("span", { class: "row-dur" }, t.duration ? fmt(t.duration) : ""))
     );
   }
@@ -579,6 +592,10 @@
     const on = !!state.cur && state.favs.has(state.cur);
     $("#pFav").classList.toggle("on", on);
     $("#npFav").classList.toggle("on", on);
+    $("#wmFav").classList.toggle("on", on);
+    $("#cxFav").classList.toggle("on", on);
+    $("#lfFav").classList.toggle("on", on);
+    $("#rmFav").classList.toggle("on", on);
   }
 
   function toggleFav(id) {
@@ -802,6 +819,7 @@
     pendingSeek = opts.frac || 0;
     pendingTime = 0;
     audio.preload = "none";
+    setAudioCors();
     audio.src = urlOf(id);
     audio.play().catch(onPlayError);
     setHash(id);
@@ -964,9 +982,16 @@
     const has = !!info && info.id === state.cur && (info.desc || info.items.length);
     box.hidden = !has;
     if (has) {
-      if (info.desc) box.append(h("div", { class: "np-sec" }, "Описание"), h("p", { class: "np-desc" }, info.desc));
+      const win = (title, alt, cls, body, foot) =>
+        h(
+          "div",
+          { class: "np-win " + cls },
+          h("div", { class: "np-sec np-win-tb" }, h("span", { class: "grip" }), h("span", { class: "tt-a" }, title), h("span", { class: "tt-b" }, alt), h("span", { class: "grip" }), h("span", { class: "wbtns" }, h("i", {}, "_"), h("i", {}, "×"))),
+          h("div", { class: "np-win-body" }, body),
+          foot ? h("div", { class: "np-win-foot" }, foot) : null
+        );
+      if (info.desc) box.append(win("Описание", "Заметки", "w-desc", h("p", { class: "np-desc" }, info.desc)));
       if (info.items.length) {
-        box.append(h("div", { class: "np-sec" }, "Метки времени"));
         const list = h("div", { class: "marks" });
         for (const it of info.items) {
           if (it.type === "text") {
@@ -987,9 +1012,10 @@
           );
           list.append(it.el);
         }
-        box.append(list);
+        box.append(win("Метки времени", "Трек-лист", "w-marks", list, `МЕТОК: ${info.marks.length}`));
       }
     }
+    renderRmSticks();
     updateActiveMark(true);
     redrawAllWaves();
   }
@@ -1005,7 +1031,10 @@
     }
     if (idx === info.active && !force) return;
     info.active = idx;
-    info.marks.forEach((m, i) => m.el && m.el.classList.toggle("active", i === idx));
+    info.marks.forEach((m, i) => {
+      if (m.el) m.el.classList.toggle("active", i === idx);
+      if (m.stick) m.stick.classList.toggle("cur", i === idx);
+    });
   }
 
   function markNear(canvas, clientX) {
@@ -1064,6 +1093,16 @@
     const label = $("#npLabel");
     label.replaceChildren();
     if (t) label.append(coverEl(t));
+    $("#cxInkA").textContent = t ? t.title : "";
+    $("#cxInkB").textContent = t ? folderTitle(t.folder) : "";
+    $("#jcTitle").textContent = t ? t.title : "";
+    $("#rmTitle").textContent = t ? t.title : "Выберите трек";
+    $("#rmSub").textContent = t ? folderTitle(t.folder) : "";
+    if (t) fillCover($("#rmCover"), t);
+    else $("#rmCover").replaceChildren();
+    $("#jcSub").textContent = t ? folderTitle(t.folder) + " · сторона A" : "";
+    fitInk();
+    $("#wmTitle").textContent = t ? t.title + "   ***   " + folderTitle(t.folder) + "   ***   " : "Выберите трек";
     loadInfo(t ? t.id : null);
     redrawNpWave();
   }
@@ -1094,9 +1133,12 @@
     const ic = icon(playing ? "pause" : "play");
     $("#bPlay").innerHTML = ic;
     $("#npPlay").innerHTML = ic;
+    $("#lfPlay").innerHTML = ic;
+    $("#rmPlay").innerHTML = ic;
     $("#bPlay").setAttribute("aria-label", playing ? "Пауза" : "Играть");
     $("#npPlay").setAttribute("aria-label", playing ? "Пауза" : "Играть");
     $("#np").classList.toggle("is-playing", playing);
+    syncWm();
     updateRows();
     if ("mediaSession" in navigator) navigator.mediaSession.playbackState = playing ? "playing" : "paused";
   }
@@ -1106,12 +1148,100 @@
     $("#np").classList.toggle("loading", on);
   }
 
+  // подписи на линейках кассеты: длинное название сжимается по ширине линейки
+  function fitInk() {
+    for (const id of ["#cxInkA", "#cxInkB"]) {
+      const el = $(id);
+      el.removeAttribute("textLength");
+      if (el.getComputedTextLength() > 570) {
+        el.setAttribute("textLength", 570);
+        el.setAttribute("lengthAdjust", "spacingAndGlyphs");
+      }
+    }
+  }
+
+  function cxShow(frac, sec) {
+    const m = Math.min(99, Math.floor(sec / 60));
+    const s = Math.floor(sec % 60);
+    const d = $("#cxDigits").children;
+    d[0].textContent = Math.floor(m / 10);
+    d[1].textContent = m % 10;
+    d[3].textContent = Math.floor(s / 10);
+    d[4].textContent = s % 10;
+    $("#cxSeekFill").style.width = frac * 100 + "%";
+    $("#cxSeekThumb").style.left = `calc(${frac * 100}% - ${frac * 16}px)`;
+    $("#cxTapeL").setAttribute("r", 70 + 24 * (1 - frac));
+    $("#cxTapeR").setAttribute("r", 70 + 24 * frac);
+  }
+
+  function rmShow(frac, sec) {
+    $("#rmTime").textContent = fmt(sec);
+    $("#rmBar").style.setProperty("--p", frac);
+  }
+
+  // метки-палочки на полосе прогресса (тема «Рим»)
+  function renderRmSticks() {
+    const bar = $("#rmBar");
+    bar.querySelectorAll("u").forEach((u) => u.remove());
+    const info = state.info;
+    const dur = duration();
+    if (!info || info.id !== state.cur || !dur) return;
+    for (const m of info.marks) {
+      if (m.t > dur) continue;
+      const u = h("u", {
+        title: m.title,
+        onclick: (e) => {
+          e.stopPropagation();
+          seekFrac(clamp01(m.t / dur));
+        },
+      });
+      u.style.left = (m.t / dur) * 100 + "%";
+      bar.append(u);
+      m.stick = u;
+    }
+    updateActiveMark(true);
+  }
+
+  function lfShow(frac, sec) {
+    $("#lfTime").textContent = fmt(sec);
+    $("#lfTrack").style.setProperty("--p", frac);
+  }
+
+  function wmShow(frac, sec) {
+    $("#wmTime").textContent = fmt(sec);
+    $("#wmProg").style.width = frac * 100 + "%";
+    $("#wmThumb").style.left = `calc(${frac * 100}% - ${frac * 18}px)`;
+  }
+
+  function syncWm() {
+    $("#wmShuf").classList.toggle("on", state.shuffle);
+    $("#wmRep").classList.toggle("on", state.repeat !== "off");
+    $("#wmRep").textContent = state.repeat === "one" ? "REP 1" : "REP";
+    const playing = !audio.paused && !audio.ended;
+    $("#cxShuf").classList.toggle("on", state.shuffle);
+    $("#cxRep").classList.toggle("on", state.repeat !== "off");
+    $("#cxRep").title = { off: "Повтор выключен", all: "Повторять всё", one: "Повторять трек" }[state.repeat];
+    $("#cxPlay").classList.toggle("on", playing);
+    $("#cxPause").classList.toggle("on", !playing && !!state.cur && audio.currentTime > 0);
+    $("#wmSt").innerHTML = playing
+      ? '<path d="M1 1v12l10-6z" fill="currentColor"/>'
+      : audio.currentTime > 0 && state.cur
+      ? '<path d="M1 1h3.5v12H1zM7.5 1H11v12H7.5z" fill="currentColor"/>'
+      : '<path d="M1 1h10v12H1z" fill="currentColor"/>';
+  }
+
   function updateProgress() {
     const dur = duration();
     const cur = audio.currentTime || 0;
     $("#tDur").textContent = fmt(dur);
     $("#npDur").textContent = fmt(dur);
     $("#npCur").textContent = fmt(cur);
+    if (!wmDrag) wmShow(dur ? Math.min(1, cur / dur) : 0, cur);
+    if (!cxDrag) cxShow(dur ? Math.min(1, cur / dur) : 0, cur);
+    if (!lfDrag) lfShow(dur ? Math.min(1, cur / dur) : 0, cur);
+    if (!rmDrag) rmShow(dur ? Math.min(1, cur / dur) : 0, cur);
+    $("#rmDur").textContent = fmt(dur);
+    $("#lfDur").textContent = fmt(dur);
     updateActiveMark();
     if (!dragging) {
       $("#tCur").textContent = fmt(cur);
@@ -1146,10 +1276,85 @@
     }
   }
 
+  /* ------------------------------------------------------------ visualizer */
+  // Включается в настройках. Нужен доступ к звуку по CORS: звук грузится с crossorigin только когда
+  // визуализатор включён, а если хранилище не разрешает (ошибка загрузки), он сам выключается.
+  const viz = { ctx: null, an: null, src: null, data: null, raf: 0, cors: false, color: "#ff5500", n: 0 };
+
+  function setAudioCors() {
+    audio.crossOrigin = settings.vz || viz.src ? "anonymous" : null;
+    viz.cors = audio.crossOrigin === "anonymous";
+  }
+
+  function ensureViz() {
+    if (viz.ctx) return true;
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return false;
+    try {
+      viz.ctx = new AC();
+      viz.src = viz.ctx.createMediaElementSource(audio);
+      viz.an = viz.ctx.createAnalyser();
+      viz.an.fftSize = 256;
+      viz.an.smoothingTimeConstant = 0.82;
+      viz.src.connect(viz.an);
+      viz.an.connect(viz.ctx.destination);
+      viz.data = new Uint8Array(viz.an.frequencyBinCount);
+      return true;
+    } catch (e) {
+      viz.ctx = viz.src = viz.an = null;
+      return false;
+    }
+  }
+
+  function vizFrame() {
+    viz.raf = 0;
+    const c = $("#viz");
+    if (!settings.vz || !viz.an || audio.paused || c.hidden || !(isWide() || document.body.classList.contains("np-open"))) return;
+    const w = c.clientWidth, hh = c.clientHeight;
+    if (w && hh) {
+      const dpr = window.devicePixelRatio || 1;
+      if (c.width !== Math.round(w * dpr) || c.height !== Math.round(hh * dpr)) {
+        c.width = Math.round(w * dpr);
+        c.height = Math.round(hh * dpr);
+      }
+      const x = c.getContext("2d");
+      x.setTransform(dpr, 0, 0, dpr, 0, 0);
+      x.clearRect(0, 0, w, hh);
+      viz.an.getByteFrequencyData(viz.data);
+      if (++viz.n % 30 === 1) viz.color = cssVar("--accent", "#ff5500");
+      const bars = 40, gap = 3, bw = (w - gap * (bars - 1)) / bars;
+      x.fillStyle = viz.color;
+      for (let i = 0; i < bars; i++) {
+        const v = viz.data[Math.min(viz.data.length - 1, 1 + Math.floor(Math.pow(i / bars, 1.4) * 90))] / 255;
+        const bh = Math.max(3, v * hh);
+        x.globalAlpha = 0.45 + 0.55 * v;
+        x.beginPath();
+        if (x.roundRect) x.roundRect(i * (bw + gap), hh - bh, bw, bh, Math.min(3, bw / 2));
+        else x.rect(i * (bw + gap), hh - bh, bw, bh);
+        x.fill();
+      }
+      x.globalAlpha = 1;
+    }
+    viz.raf = requestAnimationFrame(vizFrame);
+  }
+
+  function vizKick() {
+    const c = $("#viz");
+    c.hidden = !(settings.vz && viz.cors);
+    if (c.hidden) return;
+    if (!ensureViz()) {
+      c.hidden = true;
+      return;
+    }
+    if (viz.ctx.state === "suspended") viz.ctx.resume().catch(() => {});
+    if (!viz.raf && !audio.paused) viz.raf = requestAnimationFrame(vizFrame);
+  }
+
   /* -------------------------------------------------------------- settings */
-  const DEFAULT_SETTINGS = { theme: "dark", hs: 100, ts: 100, accent: "", text: "", bg: "none", bgUrl: "", dim: 55, fl: false, fc: false, fr: false };
+  const DEFAULT_SETTINGS = { theme: "dark", hs: 100, ts: 100, accent: "", text: "", bg: "none", bgUrl: "", dim: 55, fl: false, fc: false, fr: false, vz: false };
   const initialSettings = () => Object.assign({}, DEFAULT_SETTINGS, CFG.DEFAULT_SETTINGS || {});
   let settings = Object.assign(initialSettings(), store.get("settings", {}));
+  if (settings.theme === "black") settings.theme = "dark"; // «Чёрная» убрали
   let bgObjectUrl = "";
 
   function idb() {
@@ -1198,16 +1403,17 @@
   function applySettings() {
     const r = document.documentElement;
     r.dataset.theme = settings.theme;
+    if (curTrack()) requestAnimationFrame(fitInk);
     r.classList.toggle("f-left", !!settings.fl);
     r.classList.toggle("f-center", !!settings.fc);
     r.classList.toggle("f-right", !!settings.fr);
     r.style.setProperty("--ts", settings.ts / 100);
     r.style.setProperty("--hs", settings.hs / 100);
     r.style.setProperty("--dim", settings.dim / 100);
-    for (const [name, value] of [["--accent", settings.accent], ["--text", settings.text]]) {
-      if (value) r.style.setProperty(name, value);
-      else r.style.removeProperty(name);
-    }
+    if (settings.text) r.style.setProperty("--text", settings.text);
+    else r.style.removeProperty("--text");
+    if (settings.accent) r.style.setProperty("--accent", settings.accent);
+    else r.style.removeProperty("--accent");
     applyBackground();
     redrawAllWaves();
   }
@@ -1257,18 +1463,19 @@
       return h("div", { class: "set-row" }, h("div", { class: "set-label" }, h("span", {}, label)), h("div", { class: "colors" }, ...items, picker));
     };
 
-    const checkRow = (label, key) => {
+    const checkRow = (label, key, after) => {
       const input = h("input", { type: "checkbox", "aria-label": label });
       input.checked = !!settings[key];
       input.addEventListener("change", () => {
         settings[key] = input.checked;
         commit();
+        if (after) after();
       });
       return h("label", { class: "set-check" }, input, h("span", {}, label));
     };
 
     function draw() {
-      const themes = [["dark", "Тёмная"], ["black", "Чёрная"], ["light", "Светлая"], ["promodj", "PromoDJ"]];
+      const themes = [["dark", "Тёмная"], ["light", "Светлая"], ["sunset", "Закат"], ["promodj", "PromoDJ"], ["lofi", "Lo-Fi"], ["vhs", "VHS"], ["cassette", "Кассета"], ["rome", "Рим"]];
       const fileInput = h("input", {
         type: "file",
         accept: "image/*",
@@ -1325,6 +1532,12 @@
         checkRow("Левая панель (разделы)", "fl"),
         checkRow("Центральная панель (список треков)", "fc"),
         checkRow("Правая панель (сейчас играет)", "fr"),
+
+        h("div", { class: "set-head" }, "Пробные эффекты"),
+        checkRow("Визуализатор звука (в правой панели)", "vz", () => {
+          if (settings.vz && !viz.cors && state.cur) toast("Визуализатор включится со следующего трека");
+          vizKick();
+        }),
 
         h("div", { class: "set-head" }, "Фон"),
         h(
@@ -1461,6 +1674,172 @@
       b.classList.toggle("one", state.repeat === "one");
       b.title = { off: "Повтор выключен", all: "Повторять всё", one: "Повторять трек" }[state.repeat];
     });
+    $("#bShuffle").addEventListener("click", syncWm);
+    $("#bRepeat").addEventListener("click", syncWm);
+
+    // плеер в стиле старых программ (тема VHS): кнопки, полоса перемотки, громкость
+    const click = (id, fn) => $(id).addEventListener("click", fn);
+    click("#wmPrev", prev);
+    click("#wmNext", () => next(false));
+    click("#wmPlay", () => {
+      if (!state.cur || audio.paused) playPause();
+    });
+    click("#wmPause", () => {
+      if (state.cur) playPause();
+    });
+    click("#wmStop", () => {
+      if (!state.cur) return;
+      audio.pause();
+      audio.currentTime = 0;
+      updateProgress();
+      syncWm();
+    });
+    click("#wmShuf", () => $("#bShuffle").click());
+    click("#wmRep", () => $("#bRepeat").click());
+    click("#wmFav", () => state.cur && toggleFav(state.cur));
+    click("#wmAdd", () => state.cur && playlistMenu($("#wmAdd"), state.cur));
+    click("#wmLink", () => shareMenu($("#wmLink")));
+
+    // дека в теме «Кассета»
+    click("#cxPrev", prev);
+    click("#cxNext", () => next(false));
+    click("#cxPlay", () => {
+      if (!state.cur || audio.paused) playPause();
+    });
+    click("#cxPause", () => {
+      if (state.cur) playPause();
+    });
+    click("#cxStop", () => {
+      if (!state.cur) return;
+      audio.pause();
+      audio.currentTime = 0;
+      updateProgress();
+      syncWm();
+    });
+    click("#cxShuf", () => $("#bShuffle").click());
+    click("#cxRep", () => $("#bRepeat").click());
+    click("#cxFav", () => state.cur && toggleFav(state.cur));
+    click("#cxAdd", () => state.cur && playlistMenu($("#cxAdd"), state.cur));
+    click("#cxLink", () => shareMenu($("#cxLink")));
+
+    // панель темы «Рим»
+    click("#rmPrev", prev);
+    click("#rmNext", () => next(false));
+    click("#rmPlay", playPause);
+    click("#rmFav", () => state.cur && toggleFav(state.cur));
+    click("#rmAdd", () => state.cur && playlistMenu($("#rmAdd"), state.cur));
+    click("#rmLink", () => shareMenu($("#rmLink")));
+    {
+      const rb = $("#rmBar");
+      const frac = (e) => {
+        const r = rb.getBoundingClientRect();
+        return clamp01((e.clientX - r.left) / r.width);
+      };
+      let on = false;
+      rb.addEventListener("pointerdown", (e) => {
+        if (e.target.closest("u") || !state.cur) return;
+        on = true;
+        rmDrag = true;
+        rb.setPointerCapture(e.pointerId);
+        const f = frac(e);
+        rmShow(f, f * duration());
+      });
+      rb.addEventListener("pointermove", (e) => {
+        if (!on) return;
+        const f = frac(e);
+        rmShow(f, f * duration());
+      });
+      rb.addEventListener("pointerup", (e) => {
+        if (!on) return;
+        on = false;
+        rmDrag = false;
+        seekFrac(frac(e));
+      });
+    }
+
+    // панель темы Lo-Fi
+    click("#lfPrev", prev);
+    click("#lfNext", () => next(false));
+    click("#lfPlay", playPause);
+    click("#lfFav", () => state.cur && toggleFav(state.cur));
+    click("#lfAdd", () => state.cur && playlistMenu($("#lfAdd"), state.cur));
+    click("#lfLink", () => shareMenu($("#lfLink")));
+
+    const dragBar = (el, onMove, onDone) => {
+      const frac = (e) => {
+        const r = el.getBoundingClientRect();
+        return clamp01((e.clientX - r.left) / r.width);
+      };
+      let on = false;
+      el.addEventListener("pointerdown", (e) => {
+        on = true;
+        el.setPointerCapture(e.pointerId);
+        onMove(frac(e));
+      });
+      el.addEventListener("pointermove", (e) => on && onMove(frac(e)));
+      el.addEventListener("pointerup", (e) => {
+        if (!on) return;
+        on = false;
+        onDone(frac(e));
+      });
+      el.addEventListener("pointercancel", () => {
+        on = false;
+        onDone(null);
+      });
+    };
+    dragBar(
+      $("#wmSeek"),
+      (f) => {
+        if (!state.cur) return;
+        wmDrag = true;
+        wmShow(f, f * duration());
+      },
+      (f) => {
+        wmDrag = false;
+        if (state.cur && f != null) seekFrac(f);
+      }
+    );
+    dragBar(
+      $("#lfTrack"),
+      (f) => {
+        if (!state.cur) return;
+        lfDrag = true;
+        lfShow(f, f * duration());
+      },
+      (f) => {
+        lfDrag = false;
+        if (state.cur && f != null) seekFrac(f);
+      }
+    );
+    dragBar(
+      $("#cxSeek"),
+      (f) => {
+        if (!state.cur) return;
+        cxDrag = true;
+        cxShow(f, f * duration());
+      },
+      (f) => {
+        cxDrag = false;
+        if (state.cur && f != null) seekFrac(f);
+      }
+    );
+    dragBar(
+      $("#cxVol"),
+      (f) => {
+        $("#vol").value = Math.round(f * 100);
+        $("#vol").dispatchEvent(new Event("input"));
+      },
+      () => {}
+    );
+    dragBar(
+      $("#wmVol"),
+      (f) => {
+        $("#vol").value = Math.round(f * 100);
+        $("#vol").dispatchEvent(new Event("input"));
+      },
+      () => {}
+    );
+
     $("#bSleep").addEventListener("click", sleepMenu);
     $("#bSettings").addEventListener("click", openSettings);
     $("#bHelp").addEventListener("click", openHelp);
@@ -1499,6 +1878,10 @@
     const applyVolume = () => {
       audio.volume = vol.value / 100;
       vol.style.setProperty("--p", vol.value + "%");
+      $("#wmVol").firstElementChild.style.width = vol.value + "%";
+      $("#wmVol").lastElementChild.style.left = `calc(${vol.value}% - ${vol.value * 0.08}px)`;
+      $("#cxVol").firstElementChild.style.width = vol.value + "%";
+      $("#cxVol").lastElementChild.style.left = `calc(${vol.value}% - ${vol.value * 0.16}px)`;
       $("#bMute").innerHTML = icon(audio.muted || audio.volume === 0 ? "mute" : "volume");
     };
     vol.addEventListener("input", () => {
@@ -1543,8 +1926,23 @@
       }
       next(true);
     });
+    audio.addEventListener("durationchange", renderRmSticks);
+    audio.addEventListener("play", vizKick);
     audio.addEventListener("error", () => {
       setLoading(false);
+      if (audio.crossOrigin && !viz.src && state.cur) {
+        // хранилище не разрешило доступ к звуку для визуализатора: выключаем его и пробуем без него
+        settings.vz = false;
+        store.set("settings", settings);
+        audio.crossOrigin = null;
+        viz.cors = false;
+        pendingTime = Math.floor(audio.currentTime) || 0;
+        audio.src = urlOf(state.cur);
+        audio.play().catch(onPlayError);
+        vizKick();
+        toast("Визуализатор не работает с этим хранилищем, он выключен");
+        return;
+      }
       if (state.cur) toast("Не удалось загрузить трек");
     });
 
