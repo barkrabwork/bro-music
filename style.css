@@ -1604,3 +1604,24 @@ html.f-left .side-contacts-name { font-weight: 700; }
 @media (max-width: 760px) {
   :root[data-theme="rome"] .rome-bg { grid-column: 1; grid-row: 2 / 4; }
 }
+
+/* ---------- a11y & feedback (update 3) ---------- */
+/* Тёмная тема: тёмный текст на оранжевой кнопке (белый давал контраст ~3.2:1, нужно 4.5:1) */
+:root:not([data-theme]) .btn,
+:root[data-theme="dark"] .btn { color: #111; }
+:root:not([data-theme]) .btn.danger,
+:root[data-theme="dark"] .btn.danger { color: #fff; }
+
+/* Заметный фокус в полях поиска и ввода */
+#search:focus-visible { border-color: var(--accent); box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 45%, transparent); }
+.field:focus-visible { box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 45%, transparent); }
+
+/* Плавные ховеры и эффект нажатия */
+.btn, .icon-btn, .nav-item, .row {
+  transition: background-color 0.18s ease-out, color 0.18s ease-out, border-color 0.18s ease-out, filter 0.18s ease-out, transform 0.12s ease-out;
+}
+.btn:active, .icon-btn:active, .nav-item:active { transform: scale(0.97); }
+@media (prefers-reduced-motion: reduce) {
+  .btn, .icon-btn, .nav-item, .row { transition: none; }
+  .btn:active, .icon-btn:active, .nav-item:active { transform: none; }
+}
