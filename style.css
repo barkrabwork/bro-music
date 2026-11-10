@@ -85,7 +85,7 @@
   --bar: #fff;
   --text: #1d2b36;
   --text-2: #2f4250;
-  --muted: #667c8b;
+  --muted: #627785;
   --icon: #51677a;
   --icon-strong: #000;
   --accent: #e8582d;
@@ -1014,7 +1014,7 @@ html.f-left .side-contacts-name { font-weight: 700; }
   --bar: #efe3c6;
   --text: #3a2a1f;
   --text-2: #4d3a2c;
-  --muted: #8a7358;
+  --muted: #705d47;
   --icon: #6b5440;
   --icon-strong: #2a1c13;
   --accent: #d9482b;
@@ -1486,7 +1486,7 @@ html.f-left .side-contacts-name { font-weight: 700; }
   --bar: #f5ecd5;
   --text: #3a2418;
   --text-2: #54382a;
-  --muted: #8a6b4e;
+  --muted: #755b42;
   --icon: #6b4a35;
   --icon-strong: #2a1810;
   --accent: #a3263a;
@@ -1606,11 +1606,17 @@ html.f-left .side-contacts-name { font-weight: 700; }
 }
 
 /* ---------- a11y & feedback (update 3) ---------- */
-/* Тёмная тема: тёмный текст на оранжевой кнопке (белый давал контраст ~3.2:1, нужно 4.5:1) */
-:root:not([data-theme]) .btn,
-:root[data-theme="dark"] .btn { color: #111; }
-:root:not([data-theme]) .btn.danger,
-:root[data-theme="dark"] .btn.danger { color: #fff; }
+/* Текст на акцентных кнопках: тёмный там, где белый давал контраст ниже 4.5:1 (кроме .ghost и .danger) */
+:root:not([data-theme]) .btn:not(.ghost):not(.danger),
+:root[data-theme="dark"] .btn:not(.ghost):not(.danger),
+:root[data-theme="light"] .btn:not(.ghost):not(.danger),
+:root[data-theme="promodj"] .btn:not(.ghost):not(.danger),
+:root[data-theme="vhs"] .btn:not(.ghost):not(.danger),
+:root[data-theme="sunset"] .btn:not(.ghost):not(.danger) { color: #111; }
+:root[data-theme="cassette"] .btn:not(.ghost):not(.danger) { color: #000; }
+/* Lo-Fi: у ghost-кнопок текст был почти невидим (1.1:1), у danger слабый контраст */
+:root[data-theme="lofi"] .btn.ghost { color: var(--text); }
+:root[data-theme="lofi"] .btn.danger { color: #fff; }
 
 /* Заметный фокус в полях поиска и ввода */
 #search:focus-visible { border-color: var(--accent); box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 45%, transparent); }
