@@ -12,6 +12,14 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <section class="ss-hero" id="ssHero" aria-label="Главный экран">
+      <div class="ss-scene" id="ssScene" aria-hidden="true"></div>
+      <div class="ss-copy">
+        <div class="ss-title" id="ssTitle"></div>
+        <p class="ss-sub" id="ssSub"></p>
+        <button class="ss-cta" id="ssGo" type="button">Слушать сеты</button>
+      </div>
+    </section>
   <div class="bg-layer" id="bgLayer"></div>
   <div class="bg-dim"></div>
 
@@ -34,6 +42,18 @@
     <aside class="np no-track" id="np" aria-label="Сейчас играет">
       <button class="icon-btn np-close" id="npClose" aria-label="Свернуть" title="Свернуть" data-icon="down"></button>
       <div class="np-inner">
+        <div class="sv" id="sv">
+          <div class="sv-c" id="svC">
+            <div class="sv-disc"></div>
+            <div class="sv-ring" id="svRing"><svg aria-hidden="true"><path class="sv-track"/><path class="sv-arc"/></svg><div class="sv-knob"></div></div>
+            <div class="sv-label" id="svLabel" role="button" tabindex="0" aria-label="Играть / пауза">
+              <div class="sv-eq" aria-hidden="true"><b style="--h:.45"></b><b style="--h:.9"></b><b style="--h:.65"></b><b style="--h:.3"></b></div>
+            </div>
+            <div class="sv-ltext"><span id="svNum"></span><span id="svTitle">Выберите трек</span></div>
+          </div>
+          <div class="sv-time"><span id="svCur">0:00</span> <small>/ <span id="svDur">0:00</span></small></div>
+          <div class="sv-now" id="svNow"></div>
+        </div>
         <div class="wmx" id="wmx">
           <div class="wm-win">
             <div class="wm-tb"><span class="grip"></span><span>VILLA VIBE MIXTAPES</span><span class="grip"></span><span class="wbtns"><i>_</i><i>▫</i><i>×</i></span></div>

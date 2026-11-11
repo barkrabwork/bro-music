@@ -148,6 +148,8 @@
   let cxDrag = false; // то же в деке темы «Кассета»
   let lfDrag = false; // и в теме Lo-Fi
   let rmDrag = false; // и в теме «Рим»
+  let svDrag = false; // кольцо вокруг пластинки в теме «Закат»
+  let svRaf = 0; // покадровое плавное движение ползунка
   let sleepTimer = null;
 
   const isNew = (t) => !!t.added && Date.now() - t.added < NEW_DAYS * 864e5;
@@ -389,22 +391,163 @@
     return state.view.type === v.type && state.view.key === v.key;
   }
 
+  let viewTimer = 0;
   function setView(v) {
     state.view = v;
     state.query = "";
     $("#search").value = "";
-    renderSidebar();
-    renderContent();
-    $("#content").scrollTop = 0;
+    const smooth = document.documentElement.dataset.theme === "sunset" && !matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (!smooth) {
+      renderSidebar();
+      renderContent();
+      $("#content").scrollTop = 0;
+      return;
+    }
+    // плавная смена: лента разделов не пересобирается (подчёркивание переезжает), список гаснет и появляется заново
+    syncNav();
+    const kids = [...$("#content").children];
+    kids.forEach((k) => k.classList.add("ss-out"));
+    clearTimeout(viewTimer);
+    viewTimer = setTimeout(() => {
+      renderContent();
+      ssEnter();
+    }, kids.length ? 190 : 0);
   }
 
   function navItem(label, count, view) {
-    return h(
+    const b = h(
       "button",
       { class: "nav-item" + (viewIs(view) ? " active" : ""), onclick: () => setView(view) },
       h("span", {}, label),
       h("span", { class: "count" }, count)
     );
+    b._view = view;
+    return b;
+  }
+
+  function syncNav() {
+    $("#sidebar").querySelectorAll(".nav-item").forEach((b) => b.classList.toggle("active", !!b._view && viewIs(b._view)));
+    navAfterRender();
+  }
+
+  // появление строк списка по очереди (тема «Закат»)
+  function ssEnter() {
+    [...$("#content").children].forEach((k, i) => {
+      k.classList.remove("ss-out");
+      k.style.setProperty("--i", Math.min(i, 9));
+      k.classList.add("ss-in");
+      k.addEventListener("animationend", function done(e) {
+        if (e.target !== k) return;
+        k.classList.remove("ss-in");
+        k.style.removeProperty("--i");
+        k.removeEventListener("animationend", done);
+      });
+    });
+  }
+
+  /* ---------------------------------------------------- тема «Закат»: витрина */
+  function svShow(frac, sec) {
+    $("#svRing").style.setProperty("--p", frac.toFixed(5));
+    const t = fmt(sec);
+    const el = $("#svCur");
+    if (el.textContent !== t) el.textContent = t;
+  }
+
+  // размеры дуги в пикселях (зависят от высоты и ширины окна)
+  function svGeom() {
+    const ring = $("#svRing");
+    const r = ring.clientWidth / 2;
+    if (!r) return;
+    const svg = ring.querySelector("svg");
+    svg.setAttribute("viewBox", `0 0 ${2 * r} ${2 * r}`);
+    const d = `M${r} 1A${r - 1} ${r - 1} 0 0 1 ${r} ${2 * r - 1}`;
+    svg.querySelectorAll("path").forEach((p) => p.setAttribute("d", d));
+    ring.style.setProperty("--L", (Math.PI * (r - 1)).toFixed(1));
+  }
+
+  // плавное движение: положение считается по кадрам анимации, а не по редким событиям timeupdate
+  let svT0 = 0, svW0 = 0, svLast = -1;
+  function svSmooth() {
+    svRaf = 0;
+    if (document.documentElement.dataset.theme !== "sunset" || audio.paused || svDrag) return;
+    const now = performance.now(), ct = audio.currentTime, dur = duration();
+    if (ct !== svT0) { svT0 = ct; svW0 = now; }
+    let t = svT0 + ((now - svW0) / 1000) * (audio.playbackRate || 1);
+    if (dur) t = Math.min(t, dur);
+    if (t < svLast && svLast - t < 0.6) t = svLast; // не откатываемся назад из-за грубой точности currentTime
+    svLast = t;
+    svShow(dur ? t / dur : 0, t);
+    svRaf = requestAnimationFrame(svSmooth);
+  }
+  function svKick() {
+    if (svRaf || audio.paused || document.documentElement.dataset.theme !== "sunset") return;
+    svLast = -1;
+    svRaf = requestAnimationFrame(svSmooth);
+  }
+
+  // номер трека и название внутри пластинки
+  function svLabel() {
+    const t = curTrack();
+    const idx = t ? state.visible.indexOf(t.id) : -1;
+    const num = idx >= 0 ? String(idx + 1).padStart(2, "0") + "." : "";
+    const title = t ? t.title : "Выберите трек";
+    $("#svNum").textContent = num;
+    $("#svTitle").textContent = title;
+    $("#svNow").textContent = (num ? num + " " : "") + title;
+  }
+
+  // метки времени на кольце пластинки
+  function renderSvMarks() {
+    const ring = $("#svRing");
+    ring.querySelectorAll("u").forEach((u) => u.remove());
+    const info = state.info;
+    const dur = duration();
+    if (!info || info.id !== state.cur || !dur) return;
+    for (const m of info.marks) {
+      if (m.t > dur) continue;
+      const u = h("u", {
+        title: m.title,
+        onclick: (e) => {
+          e.stopPropagation();
+          seekFrac(clamp01(m.t / dur));
+        },
+      });
+      u.style.setProperty("--a", (m.t / dur) * 180 + "deg");
+      ring.append(u);
+      m.stick2 = u;
+    }
+  }
+
+  // длинное название раздела уменьшается, пока не поместится в две строки
+  function fitViewTitle() {
+    if (document.documentElement.dataset.theme !== "sunset") return;
+    const el = document.querySelector(".view-head h1");
+    if (!el) return;
+    el.style.fontSize = "";
+    let size = parseFloat(getComputedStyle(el).fontSize);
+    const limit = size * 0.9 * 2 + 4;
+    while (el.scrollHeight > limit && size > 26) {
+      size -= 3;
+      el.style.fontSize = size + "px";
+    }
+  }
+
+  // лента разделов: затухание по краям и прокрутка колесом
+  function navFade() {
+    const nav = $("#sidebar");
+    nav.style.setProperty("--ml", nav.scrollLeft > 4 ? "28px" : "0px");
+    nav.style.setProperty("--mr", nav.scrollLeft + nav.clientWidth < nav.scrollWidth - 4 ? "44px" : "0px");
+  }
+
+  function navAfterRender() {
+    if (document.documentElement.dataset.theme !== "sunset") return;
+    const nav = $("#sidebar");
+    const on = nav.querySelector(".nav-item.active");
+    if (on) {
+      const left = on.offsetLeft - nav.offsetLeft;
+      if (left < nav.scrollLeft + 10 || left + on.offsetWidth > nav.scrollLeft + nav.clientWidth - 40) nav.scrollTo({ left: Math.max(0, left - 24), behavior: "smooth" });
+    }
+    requestAnimationFrame(navFade);
   }
 
   function renderSidebar() {
@@ -443,6 +586,7 @@
     nav.append(
       h("div", { class: "side-contacts" }, h("div", { class: "side-contacts-title" }, "Контакты"), ...PROFILE.map((line, i) => h("div", { class: i === 0 ? "side-contacts-name" : "" }, line)))
     );
+    navAfterRender();
   }
 
   /* ---------------------------------------------------------- track lists */
@@ -502,6 +646,8 @@
     if (!list.length) {
       state.visible = [];
       c.append(h("div", { class: "empty" }, emptyText()));
+      svLabel();
+      fitViewTitle();
       return;
     }
 
@@ -523,6 +669,8 @@
     }
 
     head.append(h("button", { class: "btn", onclick: () => playTrack(state.visible[0], { queue: state.visible.slice() }) }, "Слушать"));
+    svLabel();
+    fitViewTitle();
     requestAnimationFrame(() => {
       redrawAllWaves();
       updateRows();
@@ -1016,6 +1164,7 @@
       }
     }
     renderRmSticks();
+    renderSvMarks();
     updateActiveMark(true);
     redrawAllWaves();
   }
@@ -1034,6 +1183,7 @@
     info.marks.forEach((m, i) => {
       if (m.el) m.el.classList.toggle("active", i === idx);
       if (m.stick) m.stick.classList.toggle("cur", i === idx);
+      if (m.stick2) m.stick2.classList.toggle("cur", i === idx);
     });
   }
 
@@ -1096,6 +1246,7 @@
     $("#cxInkA").textContent = t ? t.title : "";
     $("#cxInkB").textContent = t ? folderTitle(t.folder) : "";
     $("#jcTitle").textContent = t ? t.title : "";
+    svLabel();
     $("#rmTitle").textContent = t ? t.title : "Выберите трек";
     $("#rmSub").textContent = t ? folderTitle(t.folder) : "";
     if (t) fillCover($("#rmCover"), t);
@@ -1138,6 +1289,8 @@
     $("#bPlay").setAttribute("aria-label", playing ? "Пауза" : "Играть");
     $("#npPlay").setAttribute("aria-label", playing ? "Пауза" : "Играть");
     $("#np").classList.toggle("is-playing", playing);
+    if (!playing) svBarsReset();
+    else svKick();
     syncWm();
     updateRows();
     if ("mediaSession" in navigator) navigator.mediaSession.playbackState = playing ? "playing" : "paused";
@@ -1240,6 +1393,8 @@
     if (!cxDrag) cxShow(dur ? Math.min(1, cur / dur) : 0, cur);
     if (!lfDrag) lfShow(dur ? Math.min(1, cur / dur) : 0, cur);
     if (!rmDrag) rmShow(dur ? Math.min(1, cur / dur) : 0, cur);
+    if (!svDrag && !svRaf) svShow(dur ? Math.min(1, cur / dur) : 0, cur);
+    $("#svDur").textContent = fmt(dur);
     $("#rmDur").textContent = fmt(dur);
     $("#lfDur").textContent = fmt(dur);
     updateActiveMark();
@@ -1279,10 +1434,12 @@
   /* ------------------------------------------------------------ visualizer */
   // Включается в настройках. Нужен доступ к звуку по CORS: звук грузится с crossorigin только когда
   // визуализатор включён, а если хранилище не разрешает (ошибка загрузки), он сам выключается.
-  const viz = { ctx: null, an: null, src: null, data: null, raf: 0, cors: false, color: "#ff5500", n: 0 };
+  const viz = { ctx: null, an: null, src: null, data: null, raf: 0, cors: false, color: "#ff5500", n: 0, off: false };
+  // визуализатор нужен, если включён в настройках или идёт тема «Закат» (там он живёт в центре пластинки)
+  const vizWanted = () => !viz.off && (settings.vz || settings.theme === "sunset");
 
   function setAudioCors() {
-    audio.crossOrigin = settings.vz || viz.src ? "anonymous" : null;
+    audio.crossOrigin = vizWanted() || viz.src ? "anonymous" : null;
     viz.cors = audio.crossOrigin === "anonymous";
   }
 
@@ -1306,8 +1463,32 @@
     }
   }
 
+  // столбики в центре пластинки (тема «Закат») следуют за звуком
+  let svBarEls = null;
+  function svBars() {
+    if (!svBarEls) svBarEls = [...document.querySelectorAll("#sv .sv-eq b")];
+    viz.an.getByteFrequencyData(viz.data);
+    $("#sv").classList.add("live");
+    const n = svBarEls.length;
+    svBarEls.forEach((el, i) => {
+      const v = viz.data[Math.min(viz.data.length - 1, 1 + Math.floor(Math.pow(i / n, 1.3) * 40))] / 255;
+      el.style.transform = "scaleY(" + Math.max(0.14, Math.min(1, v * (1.1 + i * 0.22))).toFixed(2) + ")";
+    });
+  }
+
+  function svBarsReset() {
+    $("#sv").classList.remove("live");
+    if (svBarEls) svBarEls.forEach((el) => (el.style.transform = ""));
+  }
+
   function vizFrame() {
     viz.raf = 0;
+    if (settings.theme === "sunset") {
+      if (!viz.an || audio.paused) return;
+      svBars();
+      viz.raf = requestAnimationFrame(vizFrame);
+      return;
+    }
     const c = $("#viz");
     if (!settings.vz || !viz.an || audio.paused || c.hidden || !(isWide() || document.body.classList.contains("np-open"))) return;
     const w = c.clientWidth, hh = c.clientHeight;
@@ -1341,7 +1522,7 @@
   function vizKick() {
     const c = $("#viz");
     c.hidden = !(settings.vz && viz.cors);
-    if (c.hidden) return;
+    if (c.hidden && !(settings.theme === "sunset" && vizWanted() && viz.cors)) return;
     if (!ensureViz()) {
       c.hidden = true;
       return;
@@ -1400,9 +1581,184 @@
     document.documentElement.classList.toggle("has-bg", !!src);
   }
 
+  // Тема «Закат»: лендинг. Главный экран со сценой (город на закате), слоган, ниже треки.
+  // Всё строится один раз, когда тема впервые включена. Вне темы элементы скрыты стилями.
+  let sunsetReady = false;
+  function sunsetInit() {
+    if (sunsetReady) return;
+    sunsetReady = true;
+    const hero = $("#ssHero"), root = $("#ssScene");
+    const esc = (t) => t.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;" }[c]));
+    const rng = (seed) => () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
+    const W = 1600, H = 300;
+    const layer = (cls, f, sc, inner) => `<div class="ss-px sky ${cls}" style="--f:${f};--s:${sc}"><div class="rise">${inner}</div></div>`;
+    const skyline = (o) => {
+      const r = rng(o.seed);
+      let x = -20, out = "";
+      while (x < W + 20) {
+        const w = o.wmin + r() * (o.wmax - o.wmin), ht = Math.min(H - 8, (o.min + (o.max - o.min) * r()) * (o.k0 + o.k1 * x / W));
+        out += `<rect x="${x.toFixed(1)}" y="${(H - ht).toFixed(1)}" width="${w.toFixed(1)}" height="${(ht + 2).toFixed(1)}"/>`;
+        if (r() < 0.16) out += `<rect x="${(x + w / 2 - 1).toFixed(1)}" y="${(H - ht - 26).toFixed(1)}" width="2" height="28"/>`;
+        if (o.windows && ht > 95 && w > 22) {
+          const cols = Math.floor((w - 8) / 8), rows = Math.min(10, Math.floor((ht - 16) / 11));
+          for (let c = 0; c < cols; c++) for (let q = 0; q < rows; q++) {
+            if (r() < 0.1) {
+              const cls = r() < 0.5 ? ` class="ss-lit" style="animation-delay:-${(r() * 5).toFixed(2)}s;animation-duration:${(3 + r() * 5).toFixed(1)}s"` : "";
+              out += `<rect x="${(x + 5 + c * 8).toFixed(1)}" y="${(H - ht + 9 + q * 11).toFixed(1)}" width="3" height="4" fill="${r() < 0.6 ? "#ff6f91" : "#ffb25a"}"${cls}/>`;
+            }
+          }
+        }
+        x += w + (r() < 0.22 ? 3 + r() * 7 : 0);
+      }
+      return layer(o.cls, o.f, o.s, `<svg viewBox="0 0 1600 300" preserveAspectRatio="xMidYMax slice"><g fill="${o.fill}" fill-opacity="${o.op}">${out}</g></svg>`);
+    };
+    const pr = rng(5);
+    const palms = [280, 296, 484, 871, 1227, 1294].map((x) => {
+      const sc = 0.8 + pr() * 0.5, d = (-pr() * 3).toFixed(2);
+      return `<g transform="translate(${x},300) scale(${sc.toFixed(2)})"><g class="ss-palm" style="animation-delay:${d}s;animation-duration:${(2.8 + pr() * 1.6).toFixed(1)}s" fill="none" stroke="#ff5a6e" stroke-width="2.6" stroke-linecap="round"><path d="M0 0 Q5 -18 0 -38" stroke="#c23a52"/><path d="M0 -38 Q-14 -43 -24 -29"/><path d="M0 -38 Q14 -43 24 -29"/><path d="M0 -38 Q-8 -54 -18 -52"/><path d="M0 -38 Q9 -54 19 -49"/><path d="M0 -38 Q1 -56 -2 -58"/></g></g>`;
+    }).join("");
+    const rr = rng(9);
+    let refl = "";
+    for (let i = 0; i < 14; i++) refl += `<i style="top:${6 + i * 6.4}%;width:${(7 - i * 0.36).toFixed(2)}vw;--dx:${(0.3 + i * 0.12).toFixed(2)}vw;animation-delay:-${(rr() * 3).toFixed(2)}s;animation-duration:${(2.4 + rr() * 2).toFixed(1)}s"></i>`;
+    root.innerHTML =
+      `<div class="ss-px" style="--f:-5;--s:10"><div class="ss-haze h1"></div><div class="ss-haze h2"></div></div>` +
+      `<div class="ss-px" style="--f:4;--s:140"><div class="ss-sun"></div></div>` +
+      skyline({ seed: 11, min: 40, max: 130, wmin: 26, wmax: 70, k0: 0.8, k1: 0.5, fill: "#8a1f3a", op: 0.5, cls: "far", f: 6, s: 30 }) +
+      skyline({ seed: 23, min: 40, max: 150, wmin: 20, wmax: 58, k0: 0.7, k1: 0.6, fill: "#4a0c22", op: 0.85, cls: "mid", f: 11, s: 55 }) +
+      skyline({ seed: 37, min: 36, max: 170, wmin: 18, wmax: 52, k0: 0.55, k1: 0.75, fill: "#25040f", op: 1, windows: true, cls: "near", f: 18, s: 80 }) +
+      layer("palms", 24, 80, `<svg viewBox="0 0 1600 300" preserveAspectRatio="xMidYMax slice">${palms}</svg>`) +
+      `<div class="ss-water"><div class="ss-reflect">${refl}</div></div><div class="ss-scan"></div><div class="ss-grain"></div>`;
+
+    // заголовок и подзаголовок: слова появляются по одному
+    const words = (el, text, from) => {
+      let i = from;
+      el.innerHTML = text.trim().split(/\s+/).map((w) => `<span class="w" style="--i:${i++}">${esc(w)}</span>`).join(" ");
+      return i;
+    };
+    const n = words($("#ssTitle"), SITE, 0);
+    words($("#ssSub"), "Techno, deep house, dub techno: длинные сеты на один вечер.", n);
+    $("#ssGo").onclick = () => document.querySelector(".app").scrollIntoView({ behavior: "smooth" });
+
+    // пока главный экран не виден, его анимации стоят
+    new IntersectionObserver((es) => es.forEach((e) => hero.classList.toggle("off", !e.isIntersecting))).observe(hero);
+
+    // прокрутка: солнце «садится», заголовок тает, верхняя полоса темнеет
+    const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const rootEl = document.documentElement;
+    let sp = false;
+    const onScroll = () => {
+      if (sp || rootEl.dataset.theme !== "sunset") return;
+      sp = true;
+      requestAnimationFrame(() => {
+        const p = Math.min(1, Math.max(0, scrollY / hero.offsetHeight));
+        hero.style.setProperty("--p", reduce ? "0" : p.toFixed(3));
+        rootEl.classList.toggle("ss-scrolled", scrollY > 40);
+        sp = false;
+      });
+    };
+    addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+
+    // семь столбиков в центре пластинки
+    $("#sv .sv-eq").innerHTML = [0.45, 0.8, 0.6, 0.95, 0.5, 0.75, 0.35].map((hgt) => `<b style="--h:${hgt}"></b>`).join("");
+
+    // витрина появляется, когда прокрутка доходит до неё
+    const app = document.querySelector(".app");
+    app.classList.add("ss-ready");
+    const show = () => {
+      app.classList.add("ss-show");
+      ssEnter();
+    };
+    if (reduce) show();
+    else {
+      const aio = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { aio.disconnect(); show(); } }), { rootMargin: "0px 0px -25% 0px" });
+      aio.observe(app);
+    }
+
+    // пластинка: клик по центру играет/пауза, по кольцу перематывает
+    const sv = $("#sv");
+    const centre = () => { const r = $("#svC").getBoundingClientRect(); return { x: r.left, y: r.top }; };
+    const ringR = () => parseFloat(getComputedStyle($("#svRing")).width) / 2;
+    // угол от верхней точки по часовой стрелке (0..360)
+    const ringAngle = (e) => {
+      const c = centre();
+      let a = (Math.atan2(e.clientY - c.y, e.clientX - c.x) * 180) / Math.PI + 90;
+      if (a < 0) a += 360;
+      return a;
+    };
+    // дуга занимает правую половину: 0..180 градусов = 0..100% трека; левее ближайший край
+    const ringFrac = (e) => {
+      let a = ringAngle(e);
+      if (a > 180) a = a < 270 ? 180 : 0;
+      return a / 180;
+    };
+    let ringOn = false;
+    sv.addEventListener("pointerdown", (e) => {
+      if (!state.cur || e.target.closest("u") || e.target.closest(".sv-label")) return;
+      const c = centre();
+      if (Math.abs(Math.hypot(e.clientX - c.x, e.clientY - c.y) - ringR()) > 22) return;
+      const ang = ringAngle(e);
+      if (ang > 195 && ang < 345) return; // левая половина кольца не используется
+      ringOn = true;
+      svDrag = true;
+      sv.setPointerCapture(e.pointerId);
+      const f = ringFrac(e);
+      svShow(f, f * duration());
+    });
+    sv.addEventListener("pointermove", (e) => {
+      if (!ringOn) return;
+      const f = ringFrac(e);
+      svShow(f, f * duration());
+    });
+    sv.addEventListener("pointerup", (e) => {
+      if (!ringOn) return;
+      ringOn = false;
+      svDrag = false;
+      svLast = -1;
+      seekFrac(ringFrac(e));
+      svKick();
+    });
+
+    // лента разделов: колесо мыши листает вбок, края затухают
+    const nav = $("#sidebar");
+    nav.addEventListener("wheel", (e) => {
+      if (rootEl.dataset.theme !== "sunset" || nav.scrollWidth <= nav.clientWidth || Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
+      nav.scrollLeft += e.deltaY;
+      e.preventDefault();
+    }, { passive: false });
+    nav.addEventListener("scroll", navFade, { passive: true });
+    let rz = 0;
+    addEventListener("resize", () => { clearTimeout(rz); rz = setTimeout(() => { navFade(); fitViewTitle(); svGeom(); }, 120); });
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitViewTitle);
+    navAfterRender();
+    svLabel();
+    fitViewTitle();
+
+    // лёгкий параллакс от движения мыши (только пока виден главный экран)
+    if (!reduce) {
+      let tx = 0, ty = 0, cx = 0, cy = 0, run = false;
+      const step = () => {
+        cx += (tx - cx) * 0.08; cy += (ty - cy) * 0.08;
+        hero.style.setProperty("--mx", cx.toFixed(3));
+        hero.style.setProperty("--my", cy.toFixed(3));
+        if (Math.abs(tx - cx) > 0.002 || Math.abs(ty - cy) > 0.002) requestAnimationFrame(step); else run = false;
+      };
+      addEventListener("mousemove", (e) => {
+        if (rootEl.dataset.theme !== "sunset" || hero.classList.contains("off")) return;
+        tx = e.clientX / innerWidth * 2 - 1; ty = e.clientY / innerHeight * 2 - 1;
+        if (!run) { run = true; requestAnimationFrame(step); }
+      }, { passive: true });
+    }
+  }
+
   function applySettings() {
     const r = document.documentElement;
     r.dataset.theme = settings.theme;
+    if (settings.theme === "sunset") {
+      sunsetInit();
+      svGeom();
+      svKick();
+    }
     if (curTrack()) requestAnimationFrame(fitInk);
     r.classList.toggle("f-left", !!settings.fl);
     r.classList.toggle("f-center", !!settings.fc);
@@ -1761,6 +2117,13 @@
     click("#lfPrev", prev);
     click("#lfNext", () => next(false));
     click("#lfPlay", playPause);
+    click("#svLabel", playPause);
+    $("#svLabel").addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        playPause();
+      }
+    });
     click("#lfFav", () => state.cur && toggleFav(state.cur));
     click("#lfAdd", () => state.cur && playlistMenu($("#lfAdd"), state.cur));
     click("#lfLink", () => shareMenu($("#lfLink")));
@@ -1933,6 +2296,8 @@
       if (audio.crossOrigin && !viz.src && state.cur) {
         // хранилище не разрешило доступ к звуку для визуализатора: выключаем его и пробуем без него
         settings.vz = false;
+        viz.off = true;
+        svBarsReset();
         store.set("settings", settings);
         audio.crossOrigin = null;
         viz.cors = false;
