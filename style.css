@@ -1620,7 +1620,7 @@ html.f-left .side-contacts-name { font-weight: 700; }
 .ss-hero, .sv { display: none; }
 
 :root[data-theme="sunset"], :root[data-theme="sunset"] body { height: auto; }
-:root[data-theme="sunset"] { scroll-behavior: smooth; --ss-top: 58px; --D: min(62dvh, 42vw); --c1: calc(var(--D) * 0.6 + 78px); --padx: clamp(20px, 3.4vw, 56px); }
+:root[data-theme="sunset"] { scroll-behavior: smooth; --ss-top: 58px; --D: min(62svh, 42vw); --c1: calc(var(--D) * 0.6 + 78px); --padx: clamp(20px, 3.4vw, 56px); }
 :root[data-theme="sunset"] body { overflow-x: hidden; }
 
 /* ---------- верхняя полоса: поверх сцены светлая на тёмном, затем кремовая ---------- */
@@ -1645,7 +1645,7 @@ html.f-left .side-contacts-name { font-weight: 700; }
 /* ---------- главный экран ---------- */
 :root[data-theme="sunset"] .ss-hero {
   --p: 0; --mx: 0; --my: 0;
-  display: block; position: relative; height: 100vh; height: 100dvh; min-height: 560px; overflow: hidden; isolation: isolate;
+  display: block; position: relative; height: 100vh; height: 100svh; min-height: 560px; overflow: hidden; isolation: isolate;
 }
 .ss-scene { position: absolute; inset: 0; overflow: hidden; pointer-events: none;
   background:
@@ -1703,7 +1703,7 @@ html.f-left .side-contacts-name { font-weight: 700; }
 
 /* ---------- витрина: две колонки ---------- */
 :root[data-theme="sunset"] .app {
-  position: relative; display: grid; height: auto; min-height: 100vh; min-height: 100dvh; background:
+  position: relative; display: grid; height: auto; min-height: 100vh; min-height: 100svh; background:
     radial-gradient(60% 460px at 0% 0, rgba(255, 150, 105, 0.34), transparent 72%),
     radial-gradient(50% 420px at 100% 0, rgba(255, 110, 140, 0.16), transparent 72%),
     linear-gradient(180deg, #f6dccb 0, #f5e6d9 460px, #f3e9de 100%);
@@ -1789,10 +1789,10 @@ html.f-left .side-contacts-name { font-weight: 700; }
 }
 :root[data-theme="sunset"] .np-close { display: none; }
 :root[data-theme="sunset"] .np-inner {
-  position: sticky; top: 0; max-width: none; width: 100%; height: 100vh; height: 100dvh; margin: 0; padding: var(--ss-top) 0 62px; gap: 0; align-items: stretch; min-height: 0;
+  position: sticky; top: 0; max-width: none; width: 100%; height: 100vh; height: 100svh; margin: 0; padding: var(--ss-top) 0 62px; gap: 0; align-items: stretch; min-height: 0;
 }
 :root[data-theme="sunset"] .np-inner > :not(.sv):not(.jcard) { display: none !important; }
-:root[data-theme="sunset"] .sv { display: block; position: relative; flex: none; height: calc(var(--D) + 90px); --R: calc(var(--D) / 2 + 16px); --cx: calc(var(--D) * 0.11); --p: 0; }
+:root[data-theme="sunset"] .sv { display: block; position: relative; overflow: clip; flex: none; height: calc(var(--D) + 90px); --R: calc(var(--D) / 2 + 16px); --cx: calc(var(--D) * 0.11); --p: 0; }
 .sv-c { position: absolute; left: var(--cx); top: calc(var(--D) / 2 + 40px); width: 0; height: 0; }
 .sv-disc { position: absolute; width: var(--D); height: var(--D); left: calc(var(--D) / -2); top: calc(var(--D) / -2); border-radius: 50%;
   background: repeating-radial-gradient(circle at center, #0d0d0d 0 2px, #1a1a1a 2px 3px), #0d0d0d;
@@ -1844,7 +1844,7 @@ html.f-left .side-contacts-name { font-weight: 700; }
 @media (max-width: 899px) {
   :root[data-theme="sunset"] { --D: min(76vw, 340px); }
   :root[data-theme="sunset"] .app { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto auto auto auto; }
-  :root[data-theme="sunset"] .np { grid-column: 1; grid-row: 1; position: static; inset: auto; width: auto; padding-top: calc(var(--ss-top) + 6px); overflow: visible; }
+  :root[data-theme="sunset"] .np { grid-column: 1; grid-row: 1; position: static; inset: auto; width: auto; padding-top: calc(var(--ss-top) + 6px); overflow: clip; }
   :root[data-theme="sunset"] .np-inner { position: static; height: auto; padding: 0; }
   :root[data-theme="sunset"] .content > *, :root[data-theme="sunset"] .sidebar { grid-column: 1; }
   :root[data-theme="sunset"] .sv { height: calc(var(--D) + 128px); --cx: 50%; }
